@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Hosts the built static site on Cloudflare Workers.
+  // There is no Worker script: "assets" alone serves the pre-built HTML in dist.
+  "name": "good-bricks",
+  "compatibility_date": "2026-09-15",
+  "assets": {
+    "directory": "./dist",
+    // Serve dist/404.html when a URL does not match a built page.
+    "not_found_handling": "404-page"
+  }
+}

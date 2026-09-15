@@ -199,3 +199,52 @@ Once it opens, check that the collections and the settings pages appear in the s
 - The placeholder pictures are only there so the layout has something to hold. Every one of them can be replaced through the CMS by uploading a real photograph, with no involvement from an agent and no change to the code.
 - Navigation links point wherever you tell them to, including at pages that do not exist yet. The sample navigation here includes a lettings link and a contact link with no pages behind them, so they land on the not-found page. That is harmless while you are building, but worth either building or removing before anyone else sees the site.
 - Ask for the list of pages the build produced and read it. It is the quickest way to spot that a whole section quietly failed to generate, and it takes five seconds.
+
+---
+
+## Step 6 – Put the site online with Cloudflare
+
+**Why:** Everything so far has run on one computer. The website exists, the CMS can edit it, but nobody else can see any of it. This step puts the site on the internet on Cloudflare's network, and – more importantly – wires it up so that it rebuilds itself. That second part is what makes the CMS actually useful. When somebody edits a property in the CMS, the CMS saves that change to GitHub. Something then has to notice the change, rebuild the site from the new content, and publish the result. If nobody sets that up, every edit made in the CMS sits in GitHub doing nothing until a person runs a build by hand, which defeats the whole point.
+
+One thing worth knowing before you start, because Cloudflare's own documentation is in the middle of changing on this point. Cloudflare has two products that can host a website: Pages, which is the older one, and Workers, which is the newer one. Pages still works and is not being switched off, but Cloudflare now tells people to start new projects on Workers, and all new features are going there. Astro's own deployment guide says the same thing. So this site is hosted as a Worker. It is still a plain static site – the Worker does nothing except hand out the pages that were built ahead of time.
+
+**Ask your AI agent to:**
+
+- Add a Cloudflare configuration file at the top level of the project. It needs a name for the project, a compatibility date set to the day you set it up, and a setting pointing at the folder the build produces – for this kind of site that is the dist folder. It should also say to serve your own not-found page when a visitor asks for an address that does not exist, otherwise they get Cloudflare's blank one instead of the nice one you built in step 5.
+- Install the Cloudflare command line tool as a project dependency rather than relying on whatever version happens to be available. Cloudflare's build service reads the version from your project file, so pinning it here means the version that builds your site online is the same one that was tested locally.
+- Add a small file recording which version of Node the project needs. Cloudflare's build machines currently default to Node 24, which is what this project uses, so in practice this changes nothing today – but it stops your site breaking silently on the day Cloudflare changes its default.
+- Build the site and publish it once from the command line. This creates the project on your Cloudflare account and gives you a live address immediately, so you can see the site working before you touch the dashboard. The address is your project name followed by your Cloudflare subdomain and then workers.dev.
+- Update the site address in the Astro configuration file to the real live address, replacing whatever placeholder was there from step 1. Some of what the site produces for search engines and social media needs the full address to be correct.
+- Check the live site, not just the local one: the home page, a list page, an individual property page, and a deliberately wrong address to confirm the not-found page appears.
+- Commit the result.
+
+**Do this yourself:** The publishing from the command line above is a one-off push. It does not connect anything to GitHub, so it will not repeat itself when the CMS saves an edit. Connecting the repository can only be done in Cloudflare's dashboard, and it is the step that makes the whole thing automatic. It takes about two minutes.
+
+1. Sign in to the Cloudflare dashboard and choose Workers & Pages from the menu on the left.
+2. In the list, click the project your agent just published. It will be there under the name from the configuration file.
+3. Go to Settings, then Build, and click Connect.
+4. Choose GitHub as the provider. The first time you do this, Cloudflare asks to install its GitHub app on your account or organisation. Approve it, and when it asks which repositories it may see, either allow all of them or pick just this one. If the repository belongs to an organisation rather than your personal account, and you are not an owner of that organisation, GitHub will send the request to an owner for approval and nothing will work until they approve it. Chase that before assuming something is broken.
+5. Pick your repository from the list.
+6. Set the production branch to main, or whichever branch your CMS saves to.
+7. Set the build command to the npm build command for the project, and leave the deploy command at Cloudflare's default, which publishes the Worker. Leave the root directory empty unless the site lives in a sub-folder of the repository.
+8. If you did not add the Node version file to the project, add a build variable here instead, named NODE_VERSION, with the value 24. Note that build variables live under Settings, Build – they are a different list from the variables under Settings, Variables and Secrets, which are for code running on the live site and are not read during the build.
+9. Save. Cloudflare will run a build straight away.
+
+One thing that catches people out: the project name shown in the Cloudflare dashboard must match the name written in the configuration file in the repository. If those two disagree, every build fails with a confusing error. If you ever rename one, rename the other.
+
+**How to check it worked:**
+
+- Open the live address in a browser. The home page should load, and clicking through to a property and to a member of staff should work exactly as it did locally.
+- Go to your CMS, make a small and obvious edit to a property – change a price, or a headline – and save it.
+- Go back to the Cloudflare dashboard, to your project, and look at the builds list. Within a few seconds a new build should appear and start running. Watch it go green.
+- Refresh the live site and confirm your edit is there. If it is, the whole chain is working: CMS saves to GitHub, GitHub tells Cloudflare, Cloudflare rebuilds and publishes. From this point on, nobody needs to run a command to change the website.
+- Type a web address that does not exist and confirm you still get your own not-found page rather than a blank Cloudflare error.
+
+**Good to know:**
+
+- Every commit to your production branch triggers a build, whether it came from the CMS or from an agent working on the code. There is no way to make a small content change without a rebuild, and that is fine – it is how the whole thing is designed.
+- Builds take a minute or two. An editor who saves a change and immediately refreshes the live site will not see it yet. This is the single most common cause of someone thinking the CMS is broken. Tell your editors to wait a couple of minutes.
+- The free plan is generous for a site like this – visitors reading static pages are not charged, and the free plan includes a monthly allowance of builds that a small site will not come close to using. You do not need to enter card details to get a site online.
+- The workers.dev address is real and permanent, but it is not what you want on a business card. A custom domain can be added later, at any point, without rebuilding anything, from the same project settings. Be aware that a custom domain on a Worker has to use Cloudflare's own nameservers, so the domain needs to be moved to Cloudflare first.
+- Commits to branches other than your production branch get built too, and produce their own separate preview address that leaves the live site untouched. That is a good way to try something risky without anyone noticing.
+- Cloudflare's own naming is genuinely confusing at the moment. The dashboard menu says Workers & Pages, the documentation talks about Pages in a lot of older pages, and plenty of guides written a year or two ago will tell you to create a Pages project. Both products exist and both work. This site is a Worker. If you are following someone else's instructions and they tell you to click something you cannot find, check first whether they were writing about Pages.
