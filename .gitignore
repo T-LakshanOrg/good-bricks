@@ -5,3 +5,11 @@ dist/
 .env.*
 .DS_Store
 .wrangler/
+
+# added by Astro scaffold
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.env.production
+.idea/
