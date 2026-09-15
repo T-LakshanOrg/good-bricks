@@ -120,3 +120,43 @@ Only an organisation owner can do this. Your AI agent cannot do it for you, beca
 - Images live in the public folder rather than alongside the content because the CMS uploads them to a folder in the repository and writes a plain web address into the content. Keeping that folder public means the address the CMS writes is the address the browser can actually load, with nothing in between to go wrong.
 - Dates are worth storing even when nothing displays them yet. They are what lets the site show newest items first.
 - If you later decide a collection needs another field, adding it is straightforward – but removing or renaming one after people have written content is not, because existing files will no longer match. Spend a few extra minutes on the field list now.
+
+---
+
+## Step 4 – Describe the content to the CMS
+
+**Why:** Step 3 told the website what its content is. The CMS cannot read that. It needs its own description of the same thing, written for the editing interface: which collections to show in the sidebar, what each form field is called, whether a field is a dropdown or a date picker or a picture chooser, and where uploaded images should go. That description lives in one configuration file at the top level of the repository. Get it right and someone who has never seen the project can open the CMS and edit the site sensibly on their first afternoon. Get it wrong and they see a wall of blank text boxes, or the site stops building because the CMS saved something the website does not accept.
+
+**Ask your AI agent to:**
+
+- Look up the current documentation for the CMS configuration file before writing anything. The available field types and their settings change between versions, and a configuration written from memory is the most common reason the CMS refuses to load a repository.
+- Create the configuration file at the top level of the repository, and set the media section first: the folder inside the repository where uploaded pictures are saved, and the public web address they should be written as. These are two different things and both have to match what the website expects.
+- Describe each collection from step 3 in turn, using exactly the same field names. Where a field is a fixed set of choices, list the choices with the exact stored value and a readable label next to it, so the editor sees "Under offer" while the file still stores the machine-friendly version.
+- Use the right kind of field for each one rather than defaulting to text: numbers for prices and room counts, a true/false switch for the featured flag, a date picker for the publication date, a picture chooser for the main image, a picture chooser that accepts several images for a gallery, and a repeatable text field for the list of key features.
+- Set up the link between the two collections as a reference field pointing at the people collection, so the editor gets a dropdown. Ask specifically that the dropdown shows each person's real name rather than their file name, and that what gets saved is the same form the website was told to accept in step 3.
+- Describe the settings files too. They are single files rather than lists, so each becomes one page of settings, and any repeating groups inside them – navigation links, social links – need describing as repeatable groups with their own inner fields.
+- Mark the required fields as required, copy across the default values from step 3, and add a short plain-English note to any field where an editor might reasonably guess wrong, such as which unit a floor area is in.
+- Check the configuration against the content structure from step 3 and against the sample content, rather than by eye: every field named in one should appear in the other, and every choice in every dropdown should match exactly. Then build the site again to confirm nothing has broken.
+- Commit the result.
+
+**Do this yourself:**
+
+Log in to your self-hosted CMS and open the repository. You will only see it if the CMS's GitHub App was given access to it back in step 1 – if the repository is missing from the list, that is where to look first, not at the configuration file.
+
+Once it opens, check that the collections and the settings pages appear in the sidebar with the labels you expected. Open one property. Confirm the dropdowns offer the right choices, that the date field shows a calendar, and that the main image shows a preview of the existing picture rather than a broken box. Open the agent dropdown and confirm it lists your people by name. Save the item without changing anything, and confirm the CMS accepts it.
+
+**How to check it worked:**
+
+- The CMS opens the repository without an error banner. If the configuration file has a problem, the CMS says so on the way in and names the part it could not understand.
+- Every collection and every settings page from step 3 is present, and nothing extra is.
+- Opening an existing item shows all of its content already filled in. If a field comes up empty when the file clearly has a value in it, the name in the configuration does not match the name in the content – that is the single most common mistake at this step.
+- Images preview, and the agent dropdown lists people by their names.
+- The site still builds after you save an item through the CMS.
+
+**Good to know:**
+
+- The configuration file must sit at the very top level of the repository, not inside a sub-folder, and it applies to the branch it is on. It is read fresh every time the CMS opens the repository, so a change to it takes effect immediately – there is no redeploy and no restart involved.
+- It has to mirror the content structure from step 3 exactly. The two files are describing the same content to two different audiences, and neither one can compensate for a mistake in the other. Any time you add or rename a field later, you are editing both.
+- The two media settings are easy to confuse. One is where the file is stored inside the repository, the other is the address written into the content so a browser can load it. They are deliberately different, and they must both be right or pictures will upload successfully and then fail to display.
+- Dropdowns are worth the extra few lines. The stored value stays short and machine-friendly, the editor sees ordinary English, and nobody can type a fifth status that the website has never heard of.
+- Short field descriptions are cheap to write and save a surprising number of questions later. They appear under the field in the editing form.

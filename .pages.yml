@@ -1,0 +1,323 @@
+media:
+  input: public/media
+  output: /media
+  extensions: [svg, jpg, jpeg, png, webp, gif, avif]
+
+content:
+  - name: properties
+    label: Properties
+    type: collection
+    path: src/content/properties
+    format: yaml-frontmatter
+    filename:
+      template: "{primary}.md"
+      field: create
+    view:
+      fields: [title, status, type, price, city, publishedDate]
+      primary: title
+      sort: [publishedDate, title, price, status]
+      search: [title, address, city, postcode]
+      default:
+        sort: publishedDate
+        order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        description: The name of the property as it appears on the site, e.g. "Elmfield House".
+        required: true
+      - name: price
+        label: Price
+        type: number
+        description: Asking price or monthly rent, as a plain number with no symbols or commas.
+        required: true
+        options:
+          min: 0
+      - name: currency
+        label: Currency
+        type: string
+        description: Three-letter currency code used when the price is displayed.
+        required: true
+        default: GBP
+      - name: status
+        label: Status
+        type: select
+        description: Where the property is in the selling or letting process.
+        required: true
+        options:
+          values:
+            - { name: for-sale, label: For sale }
+            - { name: sold, label: Sold }
+            - { name: under-offer, label: Under offer }
+            - { name: to-let, label: To let }
+      - name: type
+        label: Property type
+        type: select
+        required: true
+        options:
+          values:
+            - { name: house, label: House }
+            - { name: flat, label: Flat }
+            - { name: bungalow, label: Bungalow }
+            - { name: commercial, label: Commercial }
+            - { name: land, label: Land }
+      - name: address
+        label: Address
+        type: string
+        description: Street address, without the town or postcode.
+        required: true
+      - name: city
+        label: Town or city
+        type: string
+        required: true
+      - name: postcode
+        label: Postcode
+        type: string
+        required: true
+      - name: bedrooms
+        label: Bedrooms
+        type: number
+        description: Use 0 for land and commercial units.
+        required: true
+        default: 0
+        options:
+          min: 0
+      - name: bathrooms
+        label: Bathrooms
+        type: number
+        required: true
+        default: 0
+        options:
+          min: 0
+      - name: area
+        label: Floor area (sq ft)
+        type: number
+        description: Floor area or plot size in square feet, as a plain number.
+        required: true
+        options:
+          min: 0
+      - name: featured
+        label: Featured
+        type: boolean
+        description: Featured properties are highlighted on the home page.
+        default: false
+      - name: image
+        label: Main image
+        type: image
+        description: The single photograph used on listing cards and at the top of the page.
+        required: true
+        options:
+          path: public/media/properties
+      - name: gallery
+        label: Gallery
+        type: image
+        description: Additional photographs, shown in order.
+        options:
+          multiple: true
+          unique: true
+          path: public/media/properties
+      - name: features
+        label: Key features
+        type: string
+        list: true
+        description: Short bullet points, one per line, e.g. "Southeast-facing garden".
+      - name: agent
+        label: Agent
+        type: reference
+        description: The member of staff handling this property.
+        required: true
+        options:
+          collection: agents
+          value: "{path}"
+          label: "{fields.name}"
+          search: "fields.name,fields.role,fields.email"
+      - name: publishedDate
+        label: Published date
+        type: date
+        description: Used to sort listings, newest first.
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: body
+        label: Description
+        type: rich-text
+        description: The full description shown on the property page.
+        options:
+          format: markdown
+          path: public/media/properties
+
+  - name: agents
+    label: Agents
+    type: collection
+    path: src/content/agents
+    format: yaml-frontmatter
+    filename:
+      template: "{primary}.md"
+      field: create
+    view:
+      fields: [name, role, email, phone]
+      primary: name
+      sort: [name, role]
+      search: [name, role, email]
+      default:
+        sort: name
+        order: asc
+    fields:
+      - name: name
+        label: Full name
+        type: string
+        required: true
+      - name: role
+        label: Job title
+        type: string
+        required: true
+      - name: photo
+        label: Photo
+        type: image
+        required: true
+        options:
+          path: public/media/agents
+      - name: phone
+        label: Phone
+        type: string
+        required: true
+      - name: email
+        label: Email
+        type: string
+        required: true
+      - name: bioShort
+        label: Short bio
+        type: text
+        description: One line, used on cards and listings.
+        required: true
+      - name: socials
+        label: Social profiles
+        type: object
+        description: Full web addresses. Leave blank any the person does not use.
+        fields:
+          - name: linkedin
+            label: LinkedIn
+            type: string
+          - name: x
+            label: X
+            type: string
+          - name: instagram
+            label: Instagram
+            type: string
+      - name: body
+        label: Biography
+        type: rich-text
+        description: The longer biography shown on the agent's page.
+        options:
+          format: markdown
+          path: public/media/agents
+
+  - name: site
+    label: Site settings
+    type: file
+    path: src/content/settings/site.yml
+    format: yaml
+    fields:
+      - name: siteName
+        label: Site name
+        type: string
+        required: true
+      - name: tagline
+        label: Tagline
+        type: string
+        required: true
+      - name: contactEmail
+        label: Contact email
+        type: string
+        required: true
+      - name: contactPhone
+        label: Contact phone
+        type: string
+        required: true
+      - name: address
+        label: Office address
+        type: text
+        required: true
+      - name: footerText
+        label: Footer text
+        type: text
+        description: Small print shown at the bottom of every page.
+        required: true
+      - name: socialLinks
+        label: Social links
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{label}"
+        fields:
+          - name: label
+            label: Label
+            type: string
+            required: true
+          - name: href
+            label: Web address
+            type: string
+            description: Must be a full address starting with https://
+            required: true
+      - name: navItems
+        label: Navigation
+        type: object
+        description: The links in the main menu, in the order they appear.
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{label}"
+        fields:
+          - name: label
+            label: Label
+            type: string
+            required: true
+          - name: href
+            label: Link
+            type: string
+            description: A path on this site, such as /properties.
+            required: true
+
+  - name: home
+    label: Home page
+    type: file
+    path: src/content/settings/home.yml
+    format: yaml
+    fields:
+      - name: heroHeading
+        label: Hero heading
+        type: string
+        required: true
+      - name: heroSubheading
+        label: Hero subheading
+        type: text
+        required: true
+      - name: heroCtaText
+        label: Button text
+        type: string
+        required: true
+      - name: heroCtaLink
+        label: Button link
+        type: string
+        required: true
+      - name: heroImage
+        label: Hero image
+        type: image
+        required: true
+        options:
+          path: public/media/site
+      - name: latestPropertiesHeading
+        label: Latest properties heading
+        type: string
+        required: true
+      - name: latestPropertiesCount
+        label: Number of properties to show
+        type: number
+        default: 6
+        options:
+          min: 1
+      - name: agentsHeading
+        label: Team section heading
+        type: string
+        required: true
