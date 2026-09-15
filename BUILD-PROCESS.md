@@ -248,3 +248,48 @@ One thing that catches people out: the project name shown in the Cloudflare dash
 - The workers.dev address is real and permanent, but it is not what you want on a business card. A custom domain can be added later, at any point, without rebuilding anything, from the same project settings. Be aware that a custom domain on a Worker has to use Cloudflare's own nameservers, so the domain needs to be moved to Cloudflare first.
 - Commits to branches other than your production branch get built too, and produce their own separate preview address that leaves the live site untouched. That is a good way to try something risky without anyone noticing.
 - Cloudflare's own naming is genuinely confusing at the moment. The dashboard menu says Workers & Pages, the documentation talks about Pages in a lot of older pages, and plenty of guides written a year or two ago will tell you to create a Pages project. Both products exist and both work. This site is a Worker. If you are following someone else's instructions and they tell you to click something you cannot find, check first whether they were writing about Pages.
+
+---
+
+## Step 7 – Test the full editing loop and hand over
+
+**Why:** Everything up to now has been set up by the AI agent. This step proves that a normal person can change the website using only the CMS, with no agent and no code, and that the change reaches the live site on its own. It is also the moment to hand the site over to whoever will look after the content.
+
+**Do this yourself:**
+
+1. Log in to your CMS and open the repository.
+2. Open the Home settings and change one visible piece of text, for example the hero heading. Save.
+3. Go to your GitHub repository. Within a few seconds a new commit should appear with a message ending in "via Pages CMS". This is the CMS writing your change into the shared folder.
+4. Go to the Cloudflare dashboard, open your project, and look at the deployments list. A new build should start automatically within a minute and finish a minute or two later.
+5. Refresh the live site. Your change should be there.
+6. Try the other kinds of edit too: add a new property with a photo uploaded through the CMS, pick an agent from the dropdown, and check that the new property appears on the properties page and on that agent's page. Then edit an agent and confirm their details update on every property they handle.
+
+**Ask your AI agent to:**
+
+- Pull the latest changes from GitHub to your computer, so the local copy includes what was edited in the CMS, and confirm the site still builds without errors. This is a useful habit before any future code changes.
+- Tidy up any test content you created, or simply delete it through the CMS.
+
+**How to check it worked:**
+
+- Each CMS save produces one commit on GitHub, one build on Cloudflare, and one visible change on the live site, in that order, without anyone running a command.
+- New items appear in the right places, and links between collections (a property and its agent) show up correctly on both sides.
+
+**Good to know:**
+
+- The CMS is the only tool content editors need. They do not need GitHub or Cloudflare accounts, only a login to the CMS, which the CMS administrator can grant.
+- If a change appears on GitHub but not on the live site, the build probably failed. The most common cause is a required field left empty or a value the site does not accept. Cloudflare's build log will say which file, and the fix is to correct that item in the CMS and save again.
+- Every change is a commit, so nothing is ever truly lost. If someone breaks something, your AI agent can restore the previous version of any file.
+- When you want to change the design or add a new kind of content later, that is agent work again: describe the change, and remind the agent that the content configuration for the CMS and the site's content structure must stay in step (Steps 3 and 4).
+- Optional next steps: attach a custom domain in Cloudflare, add a contact form, and replace placeholder images with real photographs through the CMS.
+
+---
+
+## Summary
+
+The finished setup has three parts that talk to each other:
+
+1. **The CMS** is where people edit. Every save becomes a commit on GitHub.
+2. **GitHub** holds the content and the website code, with full history.
+3. **Cloudflare** notices each commit, rebuilds the site with Astro, and publishes the result.
+
+Once it is running, the site costs nothing to host on the free plans, needs no server maintenance, and can be edited by anyone with a CMS login.
