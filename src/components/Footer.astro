@@ -1,0 +1,65 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  site: CollectionEntry<'site'>['data'];
+}
+
+const { site } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-24 border-t border-line bg-shell">
+  <div class="mx-auto max-w-6xl px-5 py-14 sm:px-8">
+    <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="lg:col-span-2">
+        <p class="font-display text-2xl font-semibold tracking-tight">{site.siteName}</p>
+        <p class="mt-3 max-w-sm text-sm leading-relaxed text-muted">{site.tagline}</p>
+      </div>
+
+      <div>
+        <h2 class="text-xs font-semibold tracking-[0.14em] text-muted uppercase">Contact</h2>
+        <ul class="mt-4 space-y-2 text-sm">
+          <li>
+            <a class="transition-colors hover:text-accent" href={`tel:${site.contactPhone.replace(/\s+/g, '')}`}>
+              {site.contactPhone}
+            </a>
+          </li>
+          <li>
+            <a class="transition-colors hover:text-accent" href={`mailto:${site.contactEmail}`}>
+              {site.contactEmail}
+            </a>
+          </li>
+          <li class="pt-1 leading-relaxed text-muted">{site.address}</li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="text-xs font-semibold tracking-[0.14em] text-muted uppercase">Follow</h2>
+        <ul class="mt-4 space-y-2 text-sm">
+          {
+            site.socialLinks.map((link) => (
+              <li>
+                <a
+                  class="transition-colors hover:text-accent"
+                  href={link.href}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div
+      class="mt-12 flex flex-col gap-3 border-t border-line pt-6 text-xs leading-relaxed text-muted sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p class="max-w-xl">{site.footerText}</p>
+      <p>&copy; {year} {site.siteName}</p>
+    </div>
+  </div>
+</footer>

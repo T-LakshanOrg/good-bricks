@@ -1,1 +1,82 @@
 @import "tailwindcss";
+
+/*
+ * Design tokens for Good Bricks.
+ * Warm neutral paper/ink palette with a single deep-green accent.
+ * Tailwind 4 reads this @theme block and generates the matching utilities
+ * (bg-paper, text-ink, font-display, and so on) - there is no config file.
+ */
+@theme {
+  --color-paper: #faf8f4;
+  --color-shell: #f1ece4;
+  --color-line: #e2dbd0;
+  --color-ink: #1b1a17;
+  --color-muted: #6f6a60;
+  --color-accent: #2f5d4f;
+  --color-accent-dark: #24483d;
+  --color-accent-soft: #e6ede9;
+
+  --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --font-body: "Public Sans", ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* Long-form markdown coming out of the content files. */
+.prose-body > * + * {
+  margin-top: 1.15em;
+}
+.prose-body p {
+  line-height: 1.75;
+  color: var(--color-ink);
+}
+.prose-body h2,
+.prose-body h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-top: 1.8em;
+}
+.prose-body h2 {
+  font-size: 1.4rem;
+}
+.prose-body h3 {
+  font-size: 1.15rem;
+}
+.prose-body ul,
+.prose-body ol {
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+.prose-body ol {
+  list-style: decimal;
+}
+.prose-body li + li {
+  margin-top: 0.4em;
+}
+.prose-body a {
+  color: var(--color-accent);
+  text-underline-offset: 3px;
+  text-decoration: underline;
+}
+.prose-body blockquote {
+  border-left: 3px solid var(--color-accent);
+  padding-left: 1rem;
+  font-style: italic;
+  color: var(--color-muted);
+}

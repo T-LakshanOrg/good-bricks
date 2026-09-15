@@ -1,0 +1,186 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, getEntry, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StatusBadge from '../../components/StatusBadge.astro';
+import {
+  TYPE_LABELS,
+  agentHref,
+  formatArea,
+  formatPrice,
+  propertySlug,
+} from '../../lib/content';
+
+export const getStaticPaths = (async () => {
+  const properties = await getCollection('properties');
+  return properties.map((property) => ({
+    params: { slug: propertySlug(property) },
+    props: { property },
+  }));
+}) satisfies GetStaticPaths;
+
+const { property } = Astro.props;
+const d = property.data;
+const { Content } = await render(property);
+const agent = await getEntry(d.agent);
+
+const images = d.gallery?.length ? d.gallery : [d.image];
+const [mainImage, ...rest] = images;
+
+const facts = [
+  { label: 'Type', value: TYPE_LABELS[d.type] },
+  d.bedrooms > 0 ? { label: 'Bedrooms', value: String(d.bedrooms) } : null,
+  d.bathrooms > 0 ? { label: 'Bathrooms', value: String(d.bathrooms) } : null,
+  { label: 'Floor area', value: formatArea(d.area) },
+  { label: 'Postcode', value: d.postcode },
+].filter(Boolean) as { label: string; value: string }[];
+---
+
+<BaseLayout title={d.title} description={`${d.address}, ${d.city} — ${formatPrice(d.price, d.currency)}`} image={d.image}>
+  <div class="mx-auto max-w-6xl px-5 pt-8 sm:px-8 sm:pt-10">
+    <a href="/properties" class="text-sm text-muted transition-colors hover:text-accent">
+      &larr; All properties
+    </a>
+  </div>
+
+  <article class="mx-auto max-w-6xl px-5 pt-6 pb-4 sm:px-8">
+    <header class="flex flex-wrap items-start justify-between gap-x-8 gap-y-4 border-b border-line pb-8">
+      <div class="max-w-2xl">
+        <StatusBadge status={d.status} />
+        <h1 class="mt-4 font-display text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-5xl">
+          {d.title}
+        </h1>
+        <p class="mt-3 text-base text-muted">{d.address}, {d.city} {d.postcode}</p>
+      </div>
+      <p class="font-display text-3xl font-semibold text-accent sm:text-4xl">
+        {formatPrice(d.price, d.currency)}
+      </p>
+    </header>
+
+    <div class="mt-8 overflow-hidden rounded-lg border border-line bg-shell">
+      <img
+        src={mainImage}
+        alt={d.title}
+        width="1200"
+        height="800"
+        loading="eager"
+        decoding="async"
+        class="aspect-[3/2] w-full object-cover"
+      />
+    </div>
+
+    {
+      rest.length > 0 && (
+        <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {rest.map((src, i) => (
+            <div class="overflow-hidden rounded-md border border-line bg-shell">
+              <img
+                src={src}
+                alt={`${d.title} — photo ${i + 2}`}
+                width="1200"
+                height="800"
+                loading="lazy"
+                decoding="async"
+                class="aspect-[3/2] w-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      )
+    }
+
+    <div class="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1.9fr)_minmax(0,1fr)] lg:gap-14">
+      <div>
+        <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-3">
+          {
+            facts.map((fact) => (
+              <div class="bg-white px-4 py-4">
+                <dt class="text-[0.68rem] font-semibold tracking-[0.12em] text-muted uppercase">
+                  {fact.label}
+                </dt>
+                <dd class="mt-1 font-display text-lg font-medium">{fact.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <div class="prose-body mt-10 max-w-none text-base">
+          <Content />
+        </div>
+
+        {
+          d.features && d.features.length > 0 && (
+            <section class="mt-10 border-t border-line pt-8">
+              <h2 class="font-display text-2xl font-semibold tracking-tight">Key features</h2>
+              <ul class="mt-5 grid gap-x-8 gap-y-3 sm:grid-cols-2">
+                {d.features.map((feature) => (
+                  <li class="flex gap-3 text-sm leading-relaxed">
+                    <span aria-hidden="true" class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+      </div>
+
+      {
+        agent && (
+          <aside class="lg:sticky lg:top-28 lg:self-start">
+            <div class="rounded-lg border border-line bg-white p-6">
+              <h2 class="text-[0.68rem] font-semibold tracking-[0.14em] text-muted uppercase">
+                Your agent
+              </h2>
+              <div class="mt-5 flex items-center gap-4">
+                <img
+                  src={agent.data.photo}
+                  alt={agent.data.name}
+                  width="600"
+                  height="600"
+                  loading="lazy"
+                  decoding="async"
+                  class="h-20 w-20 shrink-0 rounded-full border border-line object-cover"
+                />
+                <div>
+                  <p class="font-display text-xl font-semibold tracking-tight">{agent.data.name}</p>
+                  <p class="mt-0.5 text-sm text-accent">{agent.data.role}</p>
+                </div>
+              </div>
+
+              <dl class="mt-5 space-y-2 border-t border-line pt-5 text-sm">
+                <div>
+                  <dt class="sr-only">Phone</dt>
+                  <dd>
+                    <a
+                      class="transition-colors hover:text-accent"
+                      href={`tel:${agent.data.phone.replace(/\s+/g, '')}`}
+                    >
+                      {agent.data.phone}
+                    </a>
+                  </dd>
+                </div>
+                <div>
+                  <dt class="sr-only">Email</dt>
+                  <dd class="break-words">
+                    <a class="transition-colors hover:text-accent" href={`mailto:${agent.data.email}`}>
+                      {agent.data.email}
+                    </a>
+                  </dd>
+                </div>
+              </dl>
+
+              <a
+                href={agentHref(agent)}
+                class="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-sm bg-accent px-5 py-3 text-sm font-semibold text-paper transition-colors hover:bg-accent-dark"
+              >
+                About {agent.data.name.split(' ')[0]}
+                <span aria-hidden="true">&rarr;</span>
+              </a>
+            </div>
+          </aside>
+        )
+      }
+    </div>
+  </article>
+</BaseLayout>

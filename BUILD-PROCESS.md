@@ -160,3 +160,42 @@ Once it opens, check that the collections and the settings pages appear in the s
 - The two media settings are easy to confuse. One is where the file is stored inside the repository, the other is the address written into the content so a browser can load it. They are deliberately different, and they must both be right or pictures will upload successfully and then fail to display.
 - Dropdowns are worth the extra few lines. The stored value stays short and machine-friendly, the editor sees ordinary English, and nobody can type a fifth status that the website has never heard of.
 - Short field descriptions are cheap to write and save a surprising number of questions later. They appear under the field in the editing form.
+
+---
+
+## Step 5 – Build the website pages and design
+
+**Why:** Up to now the project has content and a CMS that can edit it, but nothing a visitor would want to look at. This step turns the content into an actual website: a home page, a page listing everything you have for sale, a page for each individual property, a page for each member of staff, and a sensible page for when somebody follows a broken link. It is also the step where the site gets a look. The important discipline here is that the design is a container and the content fills it – every heading, every phone number, every picture must come out of the content files rather than being typed into the templates, because anything typed into a template is invisible to the CMS and can only ever be changed by asking an agent again.
+
+**Ask your AI agent to:**
+
+- Create one shared layout that every page uses. It holds everything that is the same on every page: the page title and description that search engines and social media read, the header with your site name and navigation, and the footer with your contact details, address, social links, small print and the current year. The navigation links come from the settings file, so adding a link in the CMS adds it to every page at once.
+- Build a small set of reusable pieces rather than writing each page from scratch: a property card, a person card, a section heading, and the large introductory panel at the top of the home page. Each one is written once and used in several places, so the site stays consistent and a change to a card changes it everywhere.
+- Format prices properly using the currency stored with each property, so a price saved as a plain number appears as a pound figure with thousands separators. Do not let the currency symbol be typed into a template.
+- Build the home page from the home settings file: the big heading, the supporting paragraph, the button and its destination, and the main image all come from there, as do the two section headings and the number of properties to show. Show featured properties first and then the newest ones, up to that number, with a link through to the full list. Below that, show everybody on the team.
+- Build a page listing all properties, newest first. A simple way to let visitors narrow things down is to group the list by status and put a row of links at the top that jump to each group. That needs no clever machinery, works on a site made of plain files, and is easy to understand.
+- Build a page for each individual property showing its pictures, title, full address, price, status, type, the key facts, the list of features, and the longer description written underneath the fields in the content file. Alongside all of that, show a panel for the member of staff the property is linked to, with their photograph, name, job title, phone number, email address and a link through to their own page.
+- Build a page listing everybody on the team, and a page for each person showing their photograph, job title, contact details and longer biography – and underneath, a grid of every property linked to them. This is the same link as on the property page, read from the other end: one property points at one person, and that person's page finds every property pointing back.
+- Hide facts that do not apply rather than printing them as zero. A building plot has no bedrooms, and "0 bedrooms" reads as a mistake.
+- Add a not-found page that matches the rest of the site and offers a way back to the main sections.
+- Follow a clear design brief. The one used here was: simple, clean and modern, in the manner of a good estate agency – a warm neutral palette with a single accent colour, a strong difference in size and weight between headings and body text, generous space, content laid out in card grids, and no decorative tricks. Ask for a pairing of two web fonts, one for headings and one for body text, with ordinary system fonts named as a fallback so the page still reads properly if the fonts are slow to arrive.
+- Make sure it works on a phone as well as a desktop. Grids should drop from several columns to one, the header should not crowd itself, and nothing should ever be cut off at the side or force sideways scrolling.
+- Build the site and confirm every page is generated – one for the home page, one for each list, one for each property, one for each member of staff, and the not-found page. Then run the site locally and look at it, at both a wide window and a narrow one, and fix anything that looks wrong.
+- Commit the result.
+
+**How to check it worked:**
+
+- Open the local preview and click through the whole site as a visitor would: home page, the property list, a property, the agent panel on that property, that agent's page, and back to one of their properties. Every one of those links should work.
+- Check that the same person appears on both sides of the link. If a property says it is being sold by a particular person, that person's page must list that property. If it does not, the link is wired one way only.
+- Drag the browser window narrow, as narrow as a phone. Everything should stack into a single readable column with nothing hanging off the edge.
+- Open a content file, change something obvious – a price, a heading, a phone number in the settings – and save it. The preview should update on its own within a second or two, and the change should appear everywhere that value is used. If a piece of text does not change, it was typed into a template instead of coming from content, and that is worth fixing straight away.
+- Type a web address that does not exist and confirm you get your own not-found page rather than a blank error.
+
+**Good to know:**
+
+- A clear design brief is worth more than a long one. Two or three sentences describing the feeling you want, the kind of business it is for, and anything you definitely do not want will get you much further than a list of adjectives. Naming two or three real websites you admire helps enormously, because the agent can describe what those sites actually do and apply the same thinking rather than guessing at your taste.
+- A shared layout is the single biggest labour saver on the whole site. The header and footer exist in exactly one file, so changing the footer changes it on every page, including pages that do not exist yet.
+- Keep fixed wording out of the templates. It is very easy for an agent to type a section heading straight into a page because it is quicker, and equally easy for you not to notice until the day somebody wants to reword it and finds no box for it in the CMS. Anything an editor might plausibly want to change belongs in a content file, and the settings files exist precisely for the odd sentences that belong to no collection.
+- The placeholder pictures are only there so the layout has something to hold. Every one of them can be replaced through the CMS by uploading a real photograph, with no involvement from an agent and no change to the code.
+- Navigation links point wherever you tell them to, including at pages that do not exist yet. The sample navigation here includes a lettings link and a contact link with no pages behind them, so they land on the not-found page. That is harmless while you are building, but worth either building or removing before anyone else sees the site.
+- Ask for the list of pages the build produced and read it. It is the quickest way to spot that a whole section quietly failed to generate, and it takes five seconds.

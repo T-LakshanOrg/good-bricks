@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import AgentCard from '../../components/AgentCard.astro';
+
+const agents = (await getCollection('agents')).sort((a, b) =>
+  a.data.name.localeCompare(b.data.name, 'en-GB')
+);
+---
+
+<BaseLayout title="Our team" description="The people you will actually be dealing with.">
+  <section class="mx-auto max-w-6xl px-5 pt-12 pb-16 sm:px-8 sm:pt-16 sm:py-20">
+    <SectionHeading
+      title="Our team"
+      intro="The people you will actually be dealing with. Call any of them directly."
+    />
+    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {agents.map((agent) => <AgentCard agent={agent} />)}
+    </div>
+  </section>
+</BaseLayout>

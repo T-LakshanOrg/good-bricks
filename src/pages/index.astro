@@ -1,47 +1,51 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import PropertyCard from '../components/PropertyCard.astro';
+import AgentCard from '../components/AgentCard.astro';
+import { byFeaturedThenNewest } from '../lib/content';
 
-// Smoke test for the content model. Step 5 replaces this with real pages.
-const site = await getEntry('site', 'site');
-const home = await getEntry('home', 'home');
-const properties = await getCollection('properties');
+const homeEntry = await getEntry('home', 'home');
+if (!homeEntry) throw new Error('Missing src/content/settings/home.yml');
+const home = homeEntry.data;
 
-const rows = await Promise.all(
-	properties
-		.sort((a, b) => b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf())
-		.map(async (property) => {
-			const agent = await getEntry(property.data.agent);
-			return { property, agent };
-		})
+const properties = (await getCollection('properties'))
+  .sort(byFeaturedThenNewest)
+  .slice(0, home.latestPropertiesCount);
+
+const agents = (await getCollection('agents')).sort((a, b) =>
+  a.data.name.localeCompare(b.data.name, 'en-GB')
 );
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{site?.data.siteName}</title>
-	</head>
-	<body class="bg-slate-50 text-slate-900">
-		<main class="mx-auto max-w-3xl p-8">
-			<h1 class="text-3xl font-bold tracking-tight">{site?.data.siteName}</h1>
-			<p class="mt-2 text-slate-600">{home?.data.heroHeading}</p>
+<BaseLayout bareTitle description={home.heroSubheading} image={home.heroImage}>
+  <Hero
+    heading={home.heroHeading}
+    subheading={home.heroSubheading}
+    ctaText={home.heroCtaText}
+    ctaLink={home.heroCtaLink}
+    image={home.heroImage}
+  />
 
-			<h2 class="mt-8 text-xl font-semibold">{home?.data.latestPropertiesHeading}</h2>
-			<ul class="mt-4 space-y-2">
-				{
-					rows.map(({ property, agent }) => (
-						<li class="rounded border border-slate-200 bg-white p-3">
-							<span class="font-medium">{property.data.title}</span>
-							<span class="text-slate-500"> — {property.data.status} — {agent?.data.name}</span>
-						</li>
-					))
-				}
-			</ul>
-		</main>
-	</body>
-</html>
+  <section class="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
+    <SectionHeading
+      title={home.latestPropertiesHeading}
+      linkHref="/properties"
+      linkText="View all properties"
+    />
+    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {properties.map((property) => <PropertyCard property={property} />)}
+    </div>
+  </section>
+
+  <section class="border-t border-line bg-shell">
+    <div class="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
+      <SectionHeading title={home.agentsHeading} linkHref="/agents" linkText="View the whole team" />
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {agents.map((agent) => <AgentCard agent={agent} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

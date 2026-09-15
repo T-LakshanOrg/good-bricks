@@ -1,0 +1,51 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  site: CollectionEntry<'site'>['data'];
+}
+
+const { site } = Astro.props;
+const current = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isActive = (href: string) => current === href || current.startsWith(`${href}/`);
+---
+
+<header class="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur">
+  <div
+    class="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-8 sm:py-4"
+  >
+    <a href="/" class="group flex shrink-0 items-center gap-3">
+      <span
+        class="flex h-9 w-9 items-center justify-center rounded-sm bg-accent font-display text-base font-semibold text-paper transition-colors group-hover:bg-accent-dark"
+        aria-hidden="true">GB</span
+      >
+      <span class="flex flex-col leading-tight">
+        <span class="font-display text-lg font-semibold tracking-tight whitespace-nowrap">{site.siteName}</span>
+        <span class="hidden text-xs text-muted sm:block">{site.tagline}</span>
+      </span>
+    </a>
+
+    <nav aria-label="Main" class="flex items-center sm:justify-end">
+      <ul class="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm sm:justify-end">
+        {
+          site.navItems.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+                class:list={[
+                  'inline-block border-b-2 py-1 transition-colors hover:text-accent',
+                  isActive(item.href)
+                    ? 'border-accent text-accent'
+                    : 'border-transparent text-muted',
+                ]}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>

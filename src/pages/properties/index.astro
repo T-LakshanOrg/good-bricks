@@ -1,0 +1,58 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import PropertyCard from '../../components/PropertyCard.astro';
+import { STATUS_LABELS, STATUS_ORDER, byNewest } from '../../lib/content';
+
+const properties = (await getCollection('properties')).sort(byNewest);
+
+/**
+ * Grouped by status so the page needs no JavaScript: the filter links are plain
+ * anchors down to each group's heading.
+ */
+const groups = STATUS_ORDER.map((status) => ({
+  status,
+  label: STATUS_LABELS[status],
+  items: properties.filter((property) => property.data.status === status),
+})).filter((group) => group.items.length > 0);
+---
+
+<BaseLayout
+  title="Properties"
+  description={`Every property currently listed with us, newest first.`}
+>
+  <section class="mx-auto max-w-6xl px-5 pt-12 pb-16 sm:px-8 sm:pt-16 sm:py-20">
+    <SectionHeading
+      title="Properties"
+      intro="Everything we are currently marketing, newest first. Jump straight to a group, or scroll the lot."
+    />
+
+    <nav aria-label="Filter by status" class="mt-6 flex flex-wrap gap-2">
+      {
+        groups.map((group) => (
+          <a
+            href={`#${group.status}`}
+            class="rounded-full border border-line bg-white px-4 py-1.5 text-sm text-muted transition-colors hover:border-accent hover:text-accent"
+          >
+            {group.label}
+            <span class="ml-1 text-xs text-muted">({group.items.length})</span>
+          </a>
+        ))
+      }
+    </nav>
+
+    {
+      groups.map((group) => (
+        <div class="mt-14 scroll-mt-28" id={group.status}>
+          <h2 class="font-display text-2xl font-semibold tracking-tight">{group.label}</h2>
+          <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {group.items.map((property) => (
+              <PropertyCard property={property} />
+            ))}
+          </div>
+        </div>
+      ))
+    }
+  </section>
+</BaseLayout>

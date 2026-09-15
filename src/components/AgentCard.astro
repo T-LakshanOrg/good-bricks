@@ -1,0 +1,52 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { agentHref } from '../lib/content';
+
+interface Props {
+  agent: CollectionEntry<'agents'>;
+}
+
+const { agent } = Astro.props;
+const { name, role, photo, phone, email, bioShort } = agent.data;
+---
+
+<article
+  class="group flex h-full flex-col overflow-hidden rounded-lg border border-line bg-white transition-shadow duration-200 hover:shadow-[0_14px_40px_-24px_rgba(27,26,23,0.45)]"
+>
+  <a href={agentHref(agent)} class="block aspect-square overflow-hidden bg-shell">
+    <img
+      src={photo}
+      alt={name}
+      width="600"
+      height="600"
+      loading="lazy"
+      decoding="async"
+      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+    />
+  </a>
+
+  <div class="flex flex-1 flex-col p-5">
+    <h3 class="font-display text-xl font-semibold tracking-tight">
+      <a href={agentHref(agent)} class="transition-colors hover:text-accent">{name}</a>
+    </h3>
+    <p class="mt-1 text-sm text-accent">{role}</p>
+    <p class="mt-3 text-sm leading-relaxed text-muted">{bioShort}</p>
+
+    <dl class="mt-auto space-y-1 border-t border-line pt-4 text-sm">
+      <div>
+        <dt class="sr-only">Phone</dt>
+        <dd>
+          <a class="transition-colors hover:text-accent" href={`tel:${phone.replace(/\s+/g, '')}`}>
+            {phone}
+          </a>
+        </dd>
+      </div>
+      <div>
+        <dt class="sr-only">Email</dt>
+        <dd class="break-words">
+          <a class="transition-colors hover:text-accent" href={`mailto:${email}`}>{email}</a>
+        </dd>
+      </div>
+    </dl>
+  </div>
+</article>

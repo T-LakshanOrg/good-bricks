@@ -1,0 +1,121 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import PropertyCard from '../../components/PropertyCard.astro';
+import { byFeaturedThenNewest } from '../../lib/content';
+
+export const getStaticPaths = (async () => {
+  const agents = await getCollection('agents');
+  const properties = await getCollection('properties');
+
+  return agents.map((agent) => ({
+    params: { slug: agent.id },
+    props: {
+      agent,
+      // The reference resolves to the agent's entry id, so this is a direct match.
+      properties: properties
+        .filter((property) => property.data.agent.id === agent.id)
+        .sort(byFeaturedThenNewest),
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { agent, properties } = Astro.props;
+const { Content } = await render(agent);
+const a = agent.data;
+const firstName = a.name.split(' ')[0];
+const socials = Object.entries(a.socials ?? {}).filter(([, href]) => Boolean(href)) as [
+  string,
+  string,
+][];
+const socialLabels: Record<string, string> = { linkedin: 'LinkedIn', x: 'X', instagram: 'Instagram' };
+---
+
+<BaseLayout title={a.name} description={a.bioShort} image={a.photo}>
+  <div class="mx-auto max-w-6xl px-5 pt-8 sm:px-8 sm:pt-10">
+    <a href="/agents" class="text-sm text-muted transition-colors hover:text-accent">
+      &larr; The whole team
+    </a>
+  </div>
+
+  <article class="mx-auto max-w-6xl px-5 pt-6 sm:px-8">
+    <div class="grid gap-10 border-b border-line pb-12 md:grid-cols-[minmax(0,260px)_minmax(0,1fr)] md:gap-12">
+      <div class="overflow-hidden rounded-lg border border-line bg-shell">
+        <img
+          src={a.photo}
+          alt={a.name}
+          width="600"
+          height="600"
+          loading="eager"
+          decoding="async"
+          class="aspect-square w-full object-cover"
+        />
+      </div>
+
+      <div>
+        <h1 class="font-display text-4xl leading-tight font-semibold tracking-tight sm:text-5xl">
+          {a.name}
+        </h1>
+        <p class="mt-2 text-base text-accent">{a.role}</p>
+        <p class="mt-5 max-w-xl text-lg leading-relaxed text-muted">{a.bioShort}</p>
+
+        <div class="mt-7 flex flex-wrap gap-3">
+          <a
+            href={`tel:${a.phone.replace(/\s+/g, '')}`}
+            class="inline-flex items-center rounded-sm bg-accent px-5 py-2.5 text-sm font-semibold text-paper transition-colors hover:bg-accent-dark"
+          >
+            {a.phone}
+          </a>
+          <a
+            href={`mailto:${a.email}`}
+            class="inline-flex items-center rounded-sm border border-line bg-white px-5 py-2.5 text-sm font-semibold transition-colors hover:border-accent hover:text-accent"
+          >
+            {a.email}
+          </a>
+        </div>
+
+        {
+          socials.length > 0 && (
+            <ul class="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+              {socials.map(([key, href]) => (
+                <li>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-muted underline underline-offset-4 transition-colors hover:text-accent"
+                  >
+                    {socialLabels[key] ?? key}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+    </div>
+
+    <div class="prose-body mt-10 max-w-3xl text-base">
+      <Content />
+    </div>
+  </article>
+
+  <section class="mx-auto max-w-6xl px-5 pt-16 pb-4 sm:px-8">
+    <SectionHeading title={`Properties handled by ${firstName}`} />
+    {
+      properties.length > 0 ? (
+        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {properties.map((property) => (
+            <PropertyCard property={property} />
+          ))}
+        </div>
+      ) : (
+        <p class="mt-8 text-base text-muted">
+          {firstName} has no properties listed at the moment.
+        </p>
+      )
+    }
+  </section>
+</BaseLayout>
