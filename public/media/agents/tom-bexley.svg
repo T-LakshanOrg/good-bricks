@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="TB">
+  <rect width="600" height="600" fill="#EAEAEE"/>
+  <circle cx="300" cy="235" r="95" fill="#7C7C8A" opacity="0.8"/>
+  <path d="M120 600 C120 430 480 430 480 600 Z" fill="#7C7C8A" opacity="0.8"/>
+  <text x="300" y="565" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="44" fill="#EAEAEE">TB</text>
+</svg>

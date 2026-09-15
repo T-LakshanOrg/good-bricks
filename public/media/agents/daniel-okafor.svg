@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="DO">
+  <rect width="600" height="600" fill="#E8ECEA"/>
+  <circle cx="300" cy="235" r="95" fill="#76857E" opacity="0.8"/>
+  <path d="M120 600 C120 430 480 430 480 600 Z" fill="#76857E" opacity="0.8"/>
+  <text x="300" y="565" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="44" fill="#E8ECEA">DO</text>
+</svg>

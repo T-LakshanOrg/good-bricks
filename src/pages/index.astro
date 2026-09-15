@@ -1,5 +1,20 @@
 ---
+import { getCollection, getEntry } from 'astro:content';
 import '../styles/global.css';
+
+// Smoke test for the content model. Step 5 replaces this with real pages.
+const site = await getEntry('site', 'site');
+const home = await getEntry('home', 'home');
+const properties = await getCollection('properties');
+
+const rows = await Promise.all(
+	properties
+		.sort((a, b) => b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf())
+		.map(async (property) => {
+			const agent = await getEntry(property.data.agent);
+			return { property, agent };
+		})
+);
 ---
 
 <html lang="en">
@@ -9,12 +24,24 @@ import '../styles/global.css';
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Good Bricks</title>
+		<title>{site?.data.siteName}</title>
 	</head>
 	<body class="bg-slate-50 text-slate-900">
-		<main class="mx-auto max-w-2xl p-8">
-			<h1 class="text-3xl font-bold tracking-tight">Good Bricks</h1>
-			<p class="mt-2 text-slate-600">Astro and Tailwind CSS are set up and working.</p>
+		<main class="mx-auto max-w-3xl p-8">
+			<h1 class="text-3xl font-bold tracking-tight">{site?.data.siteName}</h1>
+			<p class="mt-2 text-slate-600">{home?.data.heroHeading}</p>
+
+			<h2 class="mt-8 text-xl font-semibold">{home?.data.latestPropertiesHeading}</h2>
+			<ul class="mt-4 space-y-2">
+				{
+					rows.map(({ property, agent }) => (
+						<li class="rounded border border-slate-200 bg-white p-3">
+							<span class="font-medium">{property.data.title}</span>
+							<span class="text-slate-500"> — {property.data.status} — {agent?.data.name}</span>
+						</li>
+					))
+				}
+			</ul>
 		</main>
 	</body>
 </html>

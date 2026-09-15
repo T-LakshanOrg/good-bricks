@@ -82,3 +82,41 @@ Only an organisation owner can do this. Your AI agent cannot do it for you, beca
 
 **Versions used when this guide was written:** Node.js 24, Astro 7, Tailwind CSS 4. Newer versions should work the same way.
 
+---
+
+## Step 3 – Define the content structure
+
+**Why:** Before a CMS can offer someone a tidy form to fill in, the website has to agree on what its content actually is. This step writes that agreement down: which kinds of content the site has, what fields each one has, and which of those fields are required. Astro then checks every content file against those rules each time the site is built, so a missing price or a misspelled status is caught immediately rather than showing up as a blank space on the live site.
+
+**Two words worth knowing:**
+
+- A **collection** is a group of content items that all share the same shape. For example, properties and agents would be two collections: many properties, all with the same fields, and many agents, all with the same fields. Each item is one file in a folder.
+- **Frontmatter** is the block of fields at the very top of a content file, above the main text. It holds the structured facts – title, price, date, and so on – while the text underneath holds the longer description. When someone edits an item in the CMS, the boxes on the form are the frontmatter fields, and the big text area at the bottom is the text below it.
+
+**Ask your AI agent to:**
+
+- Create a content configuration file that defines your collections, and for each one, list every field with its kind: plain text, number, true/false, date, a list of items, or a fixed set of choices. For example, a property's status could be limited to for sale, sold, under offer or to let, which means the CMS shows a dropdown instead of a free text box, and nobody can invent a fifth option by accident.
+- Mark which fields are required and which are optional, and give sensible defaults where one makes sense, such as the currency or the number of items to show on the home page.
+- Set up a link from one collection to another where it makes sense – for example, each property recording which agent is selling it. In the editing interface this appears as a dropdown listing the agents, and the property file simply stores which agent was chosen. Ask the agent to make the site tolerant about the exact form of that stored value, because the CMS can be configured to save either the agent's file name or its full location, and the site should accept either.
+- Add one or two settings files for the things that are not a collection at all but still need editing – the site name, contact details, navigation links, footer text, and the wording of the home page. These are single files with their own set of fields, and the CMS will present each as one page of settings rather than a list.
+- Put all images in a public media folder, organised into sub-folders such as one for property photos, one for staff portraits, and one for general site imagery.
+- Store image paths in content as web addresses beginning with a slash and the media folder name, not as locations on disk. This is the form the CMS writes when it uploads a picture, and the form a browser needs to display one.
+- Generate simple neutral placeholder images so that every property and every agent has a picture from the start. These are only stand-ins for the real photographs and can be replaced through the CMS later.
+- Create realistic sample content: a handful of items in each collection, covering the different statuses and types, with a few marked as featured, each linked to one of the people, and with some people having more than one item. Sample content is not filler – it is how you find out whether the fields you chose are the right ones before anybody starts typing real content.
+- Fill in the settings files, then build the site and confirm it passes without complaints.
+- Make a very simple temporary home page that lists each item with the name of the linked person next to it, purely to prove the link between the two collections works. A later step replaces it with the real design.
+- Commit the result.
+
+**How to check it worked:**
+
+- Your agent reports a successful build with no content errors.
+- The temporary home page lists every sample item, and each one shows the name of the person it is linked to. If the links were wrong, the names would be missing.
+- Opening one of the content files shows a readable block of fields at the top and ordinary text underneath. It should look like something a person could edit by hand, because that is exactly what the CMS will be writing.
+
+**Good to know:**
+
+- Getting the field names right now saves real work later. The CMS configuration in the next step is essentially a second description of these same fields, written for the editing interface rather than for the website, and the two have to agree. Keep the names short, lowercase and descriptive.
+- A fixed set of choices is nearly always better than a free text box for anything the site will filter or sort by. Free text invites typos, and a typo silently breaks a filter.
+- Images live in the public folder rather than alongside the content because the CMS uploads them to a folder in the repository and writes a plain web address into the content. Keeping that folder public means the address the CMS writes is the address the browser can actually load, with nothing in between to go wrong.
+- Dates are worth storing even when nothing displays them yet. They are what lets the site show newest items first.
+- If you later decide a collection needs another field, adding it is straightforward – but removing or renaming one after people have written content is not, because existing files will no longer match. Spend a few extra minutes on the field list now.

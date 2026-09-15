@@ -1,0 +1,22 @@
+siteName: Good Bricks
+tagline: Honest estate agency for Bristol and the surrounding villages.
+contactEmail: hello@goodbricks.co.uk
+contactPhone: "01179 224 118"
+address: 42 Whiteladies Road, Clifton, Bristol, BS8 2QA
+footerText: Good Bricks Ltd is registered in England and Wales. Member of The Property Ombudsman.
+socialLinks:
+  - label: LinkedIn
+    href: https://www.linkedin.com/company/example-goodbricks
+  - label: Instagram
+    href: https://www.instagram.com/example_goodbricks
+  - label: Facebook
+    href: https://www.facebook.com/example.goodbricks
+navItems:
+  - label: Properties
+    href: /properties
+  - label: Our team
+    href: /agents
+  - label: Lettings
+    href: /lettings
+  - label: Contact
+    href: /contact
