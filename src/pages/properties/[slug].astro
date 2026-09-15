@@ -36,7 +36,7 @@ const facts = [
 ].filter(Boolean) as { label: string; value: string }[];
 ---
 
-<BaseLayout title={d.title} description={`${d.address}, ${d.city} — ${formatPrice(d.price, d.currency)}`} image={d.image}>
+<BaseLayout title={d.title} description={`${d.address}, ${d.city} — ${formatPrice(d.price, d.currency, d.status)}`} image={d.image}>
   <div class="mx-auto max-w-6xl px-5 pt-8 sm:px-8 sm:pt-10">
     <a href="/properties" class="text-sm text-muted transition-colors hover:text-accent">
       &larr; All properties
@@ -53,7 +53,7 @@ const facts = [
         <p class="mt-3 text-base text-muted">{d.address}, {d.city} {d.postcode}</p>
       </div>
       <p class="font-display text-3xl font-semibold text-accent sm:text-4xl">
-        {formatPrice(d.price, d.currency)}
+        {formatPrice(d.price, d.currency, d.status)}
       </p>
     </header>
 

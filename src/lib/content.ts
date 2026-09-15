@@ -15,12 +15,15 @@ export const propertyHref = (property: Property) => `/properties/${propertySlug(
 export const agentHref = (agent: Agent) => `/agents/${agent.id}`;
 
 /** Prices are stored as plain numbers plus a currency code. */
-export const formatPrice = (amount: number, currency: string) =>
-  new Intl.NumberFormat('en-GB', {
+export const formatPrice = (amount: number, currency: string, status?: string) => {
+  const formatted = new Intl.NumberFormat('en-GB', {
     style: 'currency',
     currency,
     maximumFractionDigits: 0,
   }).format(amount);
+  // Rentals are priced per calendar month.
+  return status === 'to-let' ? `${formatted} pcm` : formatted;
+};
 
 export const formatArea = (area: number) => `${new Intl.NumberFormat('en-GB').format(area)} sq ft`;
 
