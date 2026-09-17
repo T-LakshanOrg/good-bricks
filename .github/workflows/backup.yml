@@ -4,7 +4,8 @@
 # in Pages CMS (or from GitHub's own "Run workflow" button on the Actions tab).
 #
 # To use this in another repository, copy this file as it is. Change R2_BUCKET
-# below if your bucket has a different name. Three secrets must exist in the
+# below if your bucket has a different name, and R2_FOLDER to choose which
+# top-level folder in the bucket the backups go to (sites, cms, ...). Three secrets must exist in the
 # repository settings (Settings > Secrets and variables > Actions):
 #   R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY
 #
@@ -34,6 +35,8 @@ concurrency:
 env:
   # The R2 bucket that receives the backups.
   R2_BUCKET: pagescms-backups
+  # Top-level folder inside the bucket. Backups land in <R2_FOLDER>/<repo-name>/.
+  R2_FOLDER: sites
 
 jobs:
   backup:
@@ -89,8 +92,8 @@ jobs:
           RCLONE_CONFIG_R2_ACL: private
           RCLONE_CONFIG_R2_NO_CHECK_BUCKET: "true"
         run: |
-          DEST="r2:${R2_BUCKET}/sites/${NAME}/${FILE}"
+          DEST="r2:${R2_BUCKET}/${R2_FOLDER}/${NAME}/${FILE}"
           rclone copyto --stats-one-line -v "$FILE" "$DEST"
           SIZE=$(du -h "$FILE" | cut -f1)
-          echo "Backup saved as sites/${NAME}/${FILE} (${SIZE}) in bucket ${R2_BUCKET}."
-          echo "Backup saved as \`sites/${NAME}/${FILE}\` (${SIZE}) in bucket \`${R2_BUCKET}\`." >> "$GITHUB_STEP_SUMMARY"
+          echo "Backup saved as ${R2_FOLDER}/${NAME}/${FILE} (${SIZE}) in bucket ${R2_BUCKET}."
+          echo "Backup saved as \`${R2_FOLDER}/${NAME}/${FILE}\` (${SIZE}) in bucket \`${R2_BUCKET}\`." >> "$GITHUB_STEP_SUMMARY"
