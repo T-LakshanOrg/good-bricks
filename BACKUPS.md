@@ -50,6 +50,7 @@ Between 30 and 90 days of backups is typical.
 ## Checking that backups are happening
 
 - Open the storage bucket in Cloudflare. Each site's folder should contain a fresh file with a date in its name, no older than a week.
+- The database folder should gain a new file every day.
 - On GitHub, the repository's Actions tab lists every backup run and whether it passed.
 - Press Back up now in the CMS. A new file should appear in the bucket within a couple of minutes.
 - Once, after setting up, ask your agent to take a backup file and rebuild the site from it. If the site builds, the backup is complete.
