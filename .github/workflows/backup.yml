@@ -61,7 +61,7 @@ jobs:
           NAME="${GITHUB_REPOSITORY#*/}"
           STAMP="$(date -u +%Y-%m-%d_%H%M)"
           FILE="${NAME}_${STAMP}.bundle"
-          git -C repo.git bundle create "../${FILE}" --branches --tags
+          git -C repo.git bundle create "../${FILE}" HEAD --branches --tags
           echo "FILE=${FILE}" >> "$GITHUB_ENV"
           echo "NAME=${NAME}" >> "$GITHUB_ENV"
 
