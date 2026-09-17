@@ -321,3 +321,12 @@ content:
         label: Team section heading
         type: string
         required: true
+
+actions:
+  - name: backup
+    label: Back up now
+    workflow: backup.yml
+    confirm:
+      title: Back up this site?
+      message: This saves a complete copy of the site, including all content and images, to backup storage. It takes about a minute and does not change anything on the site.
+      button: Back up
