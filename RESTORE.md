@@ -20,3 +20,43 @@ Use this part when the website's GitHub repository is deleted, damaged, locked, 
 
 **First, check GitHub's own bin.** GitHub keeps a deleted repository for 90 days. Sign in, open your settings, and look under Deleted repositories. If it is there, press Restore and you are done. Nothing else in this guide is needed. Only carry on if it is not there, or if the repository exists but its contents are wrong.
 
+**What you will see while the repository is gone.** The live website keeps working. Cloudflare holds the last build and serves it, so visitors notice nothing. The CMS still lists the site, but opening it shows "Access denied. You do not have permission to access this repository." Nobody can edit until the repository is back.
+
+### Step 1: Download the backup
+
+1. Sign in to Cloudflare and open R2 Object Storage, then the backups bucket.
+2. Open the sites folder, then the folder with the website's name.
+3. Download the newest file. The date and time are in its name. Put it somewhere easy to find, such as your Downloads folder.
+
+### Step 2: Unpack the backup
+
+Ask your AI agent to unpack the backup file into a new folder and check it. This is the one step that needs git. The agent will:
+
+1. Turn the backup file into a normal project folder. This is a single git command; the file contains every commit, so the folder comes out with the full history.
+2. Check the latest commit matches the last thing anyone saved, and that the main branch is there.
+3. Build the website from the folder. If the build succeeds, the backup is complete and nothing is missing.
+
+In the test, the folder came out with all eighteen commits, the same latest commit that was on GitHub before deletion, and the site built cleanly.
+
+### Step 3: Put it back on GitHub
+
+Your agent can do this whole step. It creates a new, completely empty repository on GitHub with the same name and owner as before, then pushes the unpacked folder into it. Within a minute the repository is back online with its full history.
+
+If you prefer to create the repository yourself: on GitHub, choose New repository under the same organisation, give it the old name, keep the same visibility, and leave every option unticked. No README, no licence. It must be empty, or the push will be refused.
+
+The repository is back, but nothing is connected to it yet. GitHub thinks of it as a brand-new repository, and so does everything that was linked to the old one. The next steps reconnect each of them.
+
+**What the CMS does on its own.** As soon as the repository is back, administrators who sign in to the CMS with GitHub can open the site again, with no reconnecting. That is because the CMS uses their own GitHub access, and they can already reach the new repository. Collaborators cannot. The CMS forgets a site's collaborators the moment its repository is deleted, so the list comes back empty and each of them sees Access denied until they are invited again. Step 5 covers that.
+
+### Step 4: Reconnect the hosting
+
+The website is hosted as a Cloudflare Worker, and the Worker was linked to the old repository. The Worker itself, its address, and its custom domain are untouched. Only the link needs redoing.
+
+1. In Cloudflare, open Workers & Pages and click the website's Worker. Go to Settings, then Builds.
+2. You will see a warning about an internal issue with the Git installation, and the old repository still named. This is expected: Cloudflare is pointing at a repository that no longer exists.
+3. Write down the build settings shown on this page. In the test they were: build command `npm run build`, deploy command `npx wrangler deploy`, production branch `main`, root directory `/`.
+4. Click Disconnect.
+5. Click Connect. If the organisation that owns the repository is not offered, choose to add a new GitHub connection and pick the organisation. GitHub then asks which repositories Cloudflare may see. Tick the restored repository and confirm. The new repository has a new identity, so it has to be granted again even though the name is the same.
+6. Back in Cloudflare, pick the repository, the production branch, and enter the build settings from step 3. Click Connect.
+7. Nothing builds yet. Cloudflare builds when the next commit is pushed. Either save something in the CMS, or ask your agent to push a small change. Watch the build in the Worker's Deployments tab. When it goes green, the hosting is reconnected.
+
