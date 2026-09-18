@@ -106,3 +106,41 @@ Had to be redone by hand:
 
 Nothing on the live website changed at any point. Visitors saw the site throughout.
 
+## Part 2: The CMS software repository
+
+Use this part when the repository that holds the CMS's own code is deleted or damaged. This was also tested for real.
+
+**Not urgent.** The CMS keeps running. The hosting platform keeps the last build it made and serves it. Nobody notices until the CMS next needs to be redeployed, which only happens when the code changes.
+
+**No GitHub bin for this one.** The CMS repository is a fork of the public Pages CMS project, and GitHub does not keep deleted forks for restoring. The backup file is the only way back. The fallback, if the backup were ever unusable, is to fork the public project again and re-add the backup workflow file.
+
+**What you will see while it is gone.** The CMS works as normal. In Railway, the CMS service's Settings page still names the old repository, with a "Could not load branches" error underneath.
+
+### Step 1: Download and unpack the backup
+
+Same as Part 1, but from the cms folder in the bucket. Ask your agent to unpack it and check it. In the test, the file came out with all five branches, all 51 tags, and 493 commits on main, matching what was on GitHub before deletion.
+
+### Step 2: Put it back on GitHub
+
+Same as Part 1: your agent creates an empty repository with the old name and pushes everything, including every branch and tag. One difference: the restored repository is a plain repository, not a fork. The Sync fork button on GitHub is gone. Upstream updates are still possible; your agent pulls them from the public project with git instead.
+
+### Step 3: Reconnect Railway
+
+Railway builds and runs the CMS from this repository, so it needs the new one.
+
+1. In Railway, open the CMS service, then Settings. Under Source Repo, click Disconnect.
+2. Connect a repository again and pick the restored one, branch main. If it is not offered, use the link to configure the GitHub app and tick the repository. The new repository has a new identity and has to be granted again.
+3. Railway may not build on its own. Click Deploy. Wait for the deployment to complete and check the CMS still opens and lets you sign in.
+
+In the test the deployment completed and the CMS came back exactly as before. The database and settings were never involved, so nobody had to sign in again.
+
+### Step 4: Reconnect the backups
+
+Same as Part 1: add the three secrets to the new repository from the password manager. This repository has no Back up now button, so ask your agent to run the backup once from GitHub to prove it works. In the test it passed and saved a fresh 3.3 MB file to the bucket. The upload log showed one failed attempt followed by a successful retry, which is normal and needs no action.
+
+### What came back on its own, and what had to be redone
+
+Came back with the backup file: the whole CMS code, all branches, all tags, all history.
+
+Had to be redone: the Railway source link, the three backup secrets. Lost for good: the fork link to the public project, which is cosmetic.
+
