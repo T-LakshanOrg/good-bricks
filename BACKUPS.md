@@ -35,7 +35,7 @@ Between 30 and 90 days of backups is typical.
 
 - **The CMS software** is backed up the same way as a website: weekly, into its own folder in the bucket.
 - **The CMS database.** A database is where a program keeps its records. For the CMS, that is the list of editors and which sites each one may open. The database lives on the platform that hosts the CMS, and that platform cannot send copies anywhere else on its own. So a small helper program is added next to the CMS, on the same platform. On a schedule, usually once a day, it saves the whole database as one file and uploads that file to the bucket, just like the website backups. Once set up, it runs by itself.
-- **The settings and keys.** When the CMS was set up, it was given a few pieces of information: its web address, the keys that let it talk to GitHub, and a secret code it uses to scramble the private parts of its database. These were typed into the hosting platform once and are not stored anywhere else, so no automatic backup can reach them. Copy them into a password manager by hand when the CMS is set up, and again whenever one changes. They belong with the database backup: the private parts of a restored database can only be read with the same secret code they were written with.
+- **The settings and keys.** When the CMS was set up, it was given a few pieces of information: its web address, the keys that let it talk to GitHub, and a secret code it uses to scramble the private parts of its database. These were typed into the hosting platform once and are not stored anywhere else, so no automatic backup can reach them. Copy them into a password manager by hand when the CMS is set up, and again whenever one changes. They belong with the database backup: the private parts of a restored database can only be read with the same secret code they were written with. Two more things live only on the hosting platform and belong in the same password manager entry: the CMS service's custom build and pre-deploy commands, and the full settings block of the database backup helper. A restore test showed that without them, rebuilding the CMS stalls.
 
 ## Setting it up: who does what
 
@@ -57,6 +57,8 @@ Between 30 and 90 days of backups is typical.
 
 ## Getting a website back
 
+The full, tested, step-by-step version is in RESTORE.md. In short:
+
 If the repository is lost, damaged, or locked:
 
 1. Download the latest backup file from the bucket.
@@ -68,6 +70,8 @@ If the CMS is lost: rebuild it from the CMS software backup, load the latest dat
 ## Good to know
 
 - Backups run at a fixed time in UTC, early on Sunday morning.
+- The three secret values cannot be read back out of GitHub once saved. Keep them in the password manager from day one.
+- Railway can also keep its own daily copies of the database volume, switched on from the volume's Backups tab. It is a handy same-day undo, but those copies vanish if the volume or project is deleted, so it is an extra, not a replacement for the bucket.
 - On a public repository, GitHub pauses scheduled backups after two months with no edits at all. Pressing Back up now restarts them. Private repositories are not affected.
 - Keep a short note in the repository of who has CMS access to the site. Then a website backup on its own tells you who to re-invite.
 - Adding another website means copying the same two files into its repository and adding the same three secrets. Everything else is automatic.
