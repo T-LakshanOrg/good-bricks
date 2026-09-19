@@ -196,6 +196,8 @@ Collaborators sign in the same way as before, by email with a one-time code, at 
 
 The new Railway project has no backup helper yet, so the new database is not being backed up. Add it the same way as in the original setup: deploy the Postgres S3 Backups template into the project, give it the R2 key and bucket details from the password manager, point its database address at the new Postgres, and set its daily schedule. Run it once and check a new file appears in the bucket's cms/database folder.
 
+Note: this is the one step that was not repeated during the restore test. It was skipped on purpose because the test setup is not a real site. The instructions come from the original setup, where the same steps worked.
+
 ### Step 7: Tidy up
 
 1. On the new Postgres service, remove the public access you added in Step 3. The CMS does not need it.
