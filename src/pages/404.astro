@@ -7,37 +7,43 @@ const navItems = siteEntry?.data.navItems ?? [];
 ---
 
 <BaseLayout title="Page not found" description="That page does not exist.">
-  <section class="mx-auto flex max-w-2xl flex-col items-start px-5 py-24 sm:px-8 sm:py-32">
-    <p class="text-xs font-semibold tracking-[0.18em] text-accent uppercase">Error 404</p>
-    <h1 class="mt-4 font-display text-4xl leading-tight font-semibold tracking-tight sm:text-5xl">
-      We could not find that page
-    </h1>
-    <p class="mt-5 text-base leading-relaxed text-muted">
-      The link may be out of date, or the property may no longer be listed. Try one of these
-      instead.
-    </p>
+  <section class="section section--lead">
+    <div class="wrap not-found">
+      <p class="field-label">Error 404</p>
+      <h1>We could not find that page</h1>
+      <p class="not-found__body">
+        The link may be out of date, or the property may no longer be listed. Try one of these
+        instead.
+      </p>
 
-    <ul class="mt-8 flex flex-wrap gap-3">
-      <li>
-        <a
-          href="/"
-          class="inline-flex items-center rounded-sm bg-accent px-5 py-2.5 text-sm font-semibold text-paper transition-colors hover:bg-accent-dark"
-        >
-          Home
-        </a>
-      </li>
-      {
-        navItems.map((item) => (
-          <li>
-            <a
-              href={item.href}
-              class="inline-flex items-center rounded-sm border border-line bg-white px-5 py-2.5 text-sm font-semibold transition-colors hover:border-accent hover:text-accent"
-            >
-              {item.label}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
+      <div class="not-found__actions">
+        <a class="btn" href="/">Home</a>
+        {navItems.map((item) => <a class="btn btn--ghost" href={item.href}>{item.label}</a>)}
+      </div>
+    </div>
   </section>
 </BaseLayout>
+
+<style>
+  .not-found {
+    max-width: 44rem;
+  }
+
+  .not-found .field-label {
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .not-found__body {
+    margin-top: 1.5rem;
+    max-width: 46ch;
+    color: var(--ink-muted);
+  }
+
+  .not-found__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.5rem;
+  }
+</style>

@@ -1,7 +1,7 @@
 ---
 name: Sarah Whitfield
 role: Director & Head of Residential Sales
-photo: /media/agents/sarah-whitfield.svg
+photo: /media/agents/sarah-whitfield.jpg
 phone: "01179 224 118"
 email: sarah@goodbricks.co.uk
 bioShort: Twenty years selling period homes across Bristol and the surrounding villages.

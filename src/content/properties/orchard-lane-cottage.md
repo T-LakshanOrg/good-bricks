@@ -11,10 +11,11 @@ bedrooms: 3
 bathrooms: 1
 area: 1080
 featured: true
-image: /media/properties/orchard-lane-cottage.svg
+image: /media/properties/orchard-lane-cottage/01-exterior.jpg
 gallery:
-  - /media/properties/orchard-lane-cottage.svg
-  - /media/properties/willow-bungalow.svg
+  - /media/properties/orchard-lane-cottage/02.jpg
+  - /media/properties/orchard-lane-cottage/03.jpg
+  - /media/properties/orchard-lane-cottage/04.jpg
 features:
   - Grade II listed, circa 1780
   - Inglenook fireplace with woodburner

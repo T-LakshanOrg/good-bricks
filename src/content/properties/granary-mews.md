@@ -11,7 +11,11 @@ bedrooms: 3
 bathrooms: 2
 area: 1140
 featured: true
-image: /media/properties/granary-mews.svg
+image: /media/properties/granary-mews/01-exterior.jpg
+gallery:
+  - /media/properties/granary-mews/02.jpg
+  - /media/properties/granary-mews/03.jpg
+  - /media/properties/granary-mews/04.jpg
 features:
   - Available from 1 November, unfurnished
   - Courtyard garden

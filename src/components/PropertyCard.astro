@@ -5,46 +5,64 @@ import { formatArea, formatPrice, propertyHref } from '../lib/content';
 
 interface Props {
   property: CollectionEntry<'properties'>;
+  /** The first card above the fold on a page can afford to load eagerly. */
+  loading?: 'eager' | 'lazy';
 }
 
-const { property } = Astro.props;
-const { title, image, city, price, currency, status, bedrooms, bathrooms, area } = property.data;
-
-const facts = [
-  bedrooms > 0 ? `${bedrooms} bed` : null,
-  bathrooms > 0 ? `${bathrooms} bath` : null,
-  formatArea(area),
-].filter(Boolean) as string[];
+const { property, loading = 'lazy' } = Astro.props;
+const { title, image, city, price, currency, status, type, bedrooms, bathrooms, area } =
+  property.data;
 ---
 
-<article
-  class="group flex h-full flex-col overflow-hidden rounded-lg border border-line bg-white transition-shadow duration-200 hover:shadow-[0_14px_40px_-24px_rgba(27,26,23,0.45)]"
->
-  <a href={propertyHref(property)} class="relative block aspect-[3/2] overflow-hidden bg-shell">
+<article class="card" data-status={status} data-type={type}>
+  <div class="card__media">
     <img
       src={image}
-      alt={title}
+      alt={`${title}, ${city}`}
       width="1200"
-      height="800"
-      loading="lazy"
+      height="900"
+      loading={loading}
       decoding="async"
-      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
     />
-    <StatusBadge status={status} class="absolute top-3 left-3 shadow-sm" />
-  </a>
-
-  <div class="flex flex-1 flex-col p-5">
-    <h3 class="font-display text-xl leading-snug font-semibold tracking-tight">
-      <a href={propertyHref(property)} class="transition-colors hover:text-accent">{title}</a>
-    </h3>
-    <p class="mt-1 text-sm text-muted">{city}</p>
-
-    <p class="mt-4 font-display text-2xl font-semibold text-accent">
-      {formatPrice(price, currency, status)}
-    </p>
-
-    <ul class="mt-auto flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-4 text-sm text-muted">
-      {facts.map((fact) => <li>{fact}</li>)}
-    </ul>
+    <StatusBadge status={status} class="card__badge" />
   </div>
+
+  <div class="card__body">
+    <div class="card__row">
+      <h3><a class="card__link" href={propertyHref(property)}>{title}</a></h3>
+      <span class="card__price">{formatPrice(price, currency, status)}</span>
+    </div>
+    <p class="card__meta">{city}</p>
+  </div>
+
+  <ul class="stats">
+    <!-- Floor area: a corner-marked frame. -->
+    <li>
+      <svg viewBox="0 0 24 24" aria-hidden="true"
+        ><path d="M3 9V3h6M21 15v6h-6M21 9V3h-6M3 15v6h6"></path></svg
+      >
+      {formatArea(area)}
+    </li>
+    <!-- A plot has no bedrooms; printing "0 bed" would read as a mistake. -->
+    {
+      bedrooms > 0 && (
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M2 17v-5h20v5M2 17v3M22 17v3M4 12V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4" />
+          </svg>
+          {bedrooms} bed
+        </li>
+      )
+    }
+    {
+      bathrooms > 0 && (
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 12h18v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3ZM6 12V6a2 2 0 0 1 4 0M6 19l-1 2M18 19l1 2" />
+          </svg>
+          {bathrooms} bath
+        </li>
+      )
+    }
+  </ul>
 </article>

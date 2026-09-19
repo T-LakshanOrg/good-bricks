@@ -1,82 +1,478 @@
-@import "tailwindcss";
+/* ------------------------------------------------------------------ tokens --
+   Good Bricks. Clean, modern, near-monochrome. Two sans families, no radii
+   anywhere. Colour carries meaning — listing status — and nothing else.
 
-/*
- * Design tokens for Good Bricks.
- * Warm neutral paper/ink palette with a single deep-green accent.
- * Tailwind 4 reads this @theme block and generates the matching utilities
- * (bg-paper, text-ink, font-display, and so on) - there is no config file.
- */
-@theme {
-  --color-paper: #faf8f4;
-  --color-shell: #f1ece4;
-  --color-line: #e2dbd0;
-  --color-ink: #1b1a17;
-  --color-muted: #6f6a60;
-  --color-accent: #2f5d4f;
-  --color-accent-dark: #24483d;
-  --color-accent-soft: #e6ede9;
+   This is a plain-CSS class system: there are no Tailwind utilities in the
+   templates, so Tailwind is not imported. That also means no Preflight, which
+   is why the reset below is not optional.
+---------------------------------------------------------------------------- */
 
-  --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
-  --font-body: "Public Sans", ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+:root {
+  /* Type. Instrument Sans sets headings; Inter carries everything else. */
+  --font-display: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Ground and ink. */
+  --bg: #ffffff;
+  --bg-sunken: #f6f6f5;
+  --ink: #131313;
+  --ink-muted: #6c6c6c;
+  --line: #e4e4e2;
+  --line-strong: #131313;
+
+  /* Status. Functional only — these are the site's only colours. */
+  --status-for-sale: #1c6b45;
+  --status-under-offer: #8a5a00;
+  --status-sold: #6c6c6c;
+  --status-to-let: #131313;
+
+  /* Rhythm. */
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --measure: 68ch;
+  --section-gap: clamp(4rem, 9vw, 7.5rem);
+}
+
+/* ------------------------------------------------------------------- reset -- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-radius: 0;
 }
 
 html {
-  scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
 
 body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--ink);
   font-family: var(--font-body);
-  background-color: var(--color-paper);
-  color: var(--color-ink);
+  font-size: 1rem;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
-:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
+/* Keeps the footer at the foot on short pages (the 404, an empty listing). */
+body > main {
+  flex: 1;
 }
 
-/* Long-form markdown coming out of the content files. */
-.prose-body > * + * {
-  margin-top: 1.15em;
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
 }
-.prose-body p {
-  line-height: 1.75;
-  color: var(--color-ink);
+
+a {
+  color: inherit;
+  text-decoration: none;
 }
-.prose-body h2,
-.prose-body h3 {
+
+h1,
+h2,
+h3,
+h4 {
   font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(2.25rem, 5.5vw, 4rem);
+}
+
+h2 {
+  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+}
+
+h3 {
+  font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+}
+
+p,
+dd,
+figure {
+  margin: 0;
+}
+
+ul,
+ol,
+dl {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+}
+
+/* ------------------------------------------------------------------ layout -- */
+
+.wrap {
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: var(--section-gap);
+}
+
+.section--sunken {
+  background: var(--bg-sunken);
+}
+
+/* The first section of an interior page sits under the header, not under a
+   hero, so it needs less air above it than between two sections. */
+.section--lead {
+  padding-top: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+/* One heading, and at most one supporting line. Never a third tier. */
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  margin-bottom: clamp(2rem, 4vw, 3.25rem);
+}
+
+.section-head p {
+  color: var(--ink-muted);
+  max-width: 46ch;
+}
+
+.grid {
+  display: grid;
+  gap: clamp(1.5rem, 2.5vw, 2rem);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+}
+
+/* Four-up for people: a 20rem track leaves the fourth agent stranded on its
+   own row at the 76rem wrap. */
+.grid--four {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+}
+
+/* ----------------------------------------------------------------- buttons -- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
   font-weight: 500;
-  letter-spacing: -0.01em;
-  margin-top: 1.8em;
+  line-height: 1;
+  border: 1px solid var(--line-strong);
+  background: var(--ink);
+  color: #fff;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 }
-.prose-body h2 {
-  font-size: 1.4rem;
+
+.btn:hover {
+  background: transparent;
+  color: var(--ink);
 }
-.prose-body h3 {
-  font-size: 1.15rem;
+
+.btn--ghost {
+  background: transparent;
+  color: var(--ink);
 }
-.prose-body ul,
-.prose-body ol {
+
+.btn--ghost:hover {
+  background: var(--ink);
+  color: #fff;
+}
+
+.link-arrow {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 0.15rem;
+  white-space: nowrap;
+}
+
+/* The one place back-navigation appears: above a detail page's header. */
+.back {
+  display: inline-block;
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+  margin-bottom: 2rem;
+}
+
+.back:hover {
+  color: var(--ink);
+}
+
+/* ------------------------------------------------------------------ badges -- */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--bg);
+  color: var(--status-sold);
+}
+
+/* Keyed on the stored status slug, not the printed label. */
+.badge[data-status='for-sale'] {
+  color: var(--status-for-sale);
+}
+
+.badge[data-status='under-offer'] {
+  color: var(--status-under-offer);
+}
+
+.badge[data-status='sold'] {
+  color: var(--status-sold);
+}
+
+.badge[data-status='to-let'] {
+  color: var(--status-to-let);
+}
+
+/* ------------------------------------------------------------------- cards -- */
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  height: 100%;
+  transition: border-color 0.15s ease;
+}
+
+.card:hover {
+  border-color: var(--line-strong);
+}
+
+/* Stretched link: the title anchor is the card's only link, but its hit area
+   covers the whole card. One tab stop per card instead of several. */
+.card__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+/* `display: flex` above would otherwise beat the UA rule for [hidden],
+   leaving filtered-out cards on screen. */
+.card[hidden] {
+  display: none;
+}
+
+.card__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--bg-sunken);
+}
+
+/* People are photographed square. */
+.card__media--square {
+  aspect-ratio: 1 / 1;
+}
+
+.card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card__badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+}
+
+.card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.25rem;
+}
+
+/* Title and price share a baseline row; price sits hard right. */
+.card__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.card__row h3 {
+  font-size: 1.125rem;
+}
+
+.card__price {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.card__meta {
+  color: var(--ink-muted);
+  font-size: 0.875rem;
+}
+
+/* ------------------------------------------------------------------- stats -- */
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  /* Pin to the card foot so stat rows line up across a row of cards whose
+     titles and addresses wrap to different line counts. */
+  margin: auto 0 0;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--line);
+  list-style: none;
+  color: var(--ink-muted);
+  font-size: 0.875rem;
+}
+
+.stats li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.stats svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.5;
+}
+
+/* ------------------------------------------------------------- field lists -- */
+
+/* Small uppercase label over a display-face value. Used for the property
+   specs, an agent's contact details, and anywhere else a fact needs a name. */
+.fields dt,
+.field-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.fields dd {
+  margin: 0.4rem 0 0;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 500;
+}
+
+/* ---------------------------------------------------------------- rich text -- */
+
+.rich-text {
+  max-width: var(--measure);
+  line-height: 1.75;
+}
+
+.rich-text > * + * {
+  margin-top: 1.25em;
+}
+
+.rich-text h2,
+.rich-text h3,
+.rich-text h4 {
+  margin-top: 2em;
+}
+
+.rich-text h2 {
+  font-size: clamp(1.375rem, 2.2vw, 1.75rem);
+}
+
+.rich-text h3 {
+  font-size: 1.1875rem;
+}
+
+.rich-text h4 {
+  font-size: 1.0625rem;
+}
+
+.rich-text ul,
+.rich-text ol {
   padding-left: 1.25rem;
   list-style: disc;
 }
-.prose-body ol {
+
+.rich-text ol {
   list-style: decimal;
 }
-.prose-body li + li {
+
+.rich-text li + li {
   margin-top: 0.4em;
 }
-.prose-body a {
-  color: var(--color-accent);
-  text-underline-offset: 3px;
-  text-decoration: underline;
+
+.rich-text a {
+  border-bottom: 1px solid var(--line-strong);
 }
-.prose-body blockquote {
-  border-left: 3px solid var(--color-accent);
-  padding-left: 1rem;
-  font-style: italic;
-  color: var(--color-muted);
+
+.rich-text blockquote {
+  margin-left: 0;
+  padding-left: 1.5rem;
+  border-left: 2px solid var(--ink);
+  font-size: 1.125rem;
+}
+
+.rich-text strong {
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------------ a11y --- */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The skip link is hidden until it is tabbed to, and then it must actually be
+   visible — a permanently clipped skip link helps nobody. */
+.skip-link:focus-visible {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 100;
+  width: auto;
+  height: auto;
+  clip-path: none;
+  overflow: visible;
+  padding: 0.75rem 1.25rem;
+  background: var(--ink);
+  color: #fff;
+  font-size: 0.9375rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
 }

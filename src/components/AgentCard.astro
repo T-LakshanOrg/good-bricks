@@ -7,46 +7,42 @@ interface Props {
 }
 
 const { agent } = Astro.props;
-const { name, role, photo, phone, email, bioShort } = agent.data;
+const { name, role, photo, bioShort } = agent.data;
 ---
 
-<article
-  class="group flex h-full flex-col overflow-hidden rounded-lg border border-line bg-white transition-shadow duration-200 hover:shadow-[0_14px_40px_-24px_rgba(27,26,23,0.45)]"
->
-  <a href={agentHref(agent)} class="block aspect-square overflow-hidden bg-shell">
-    <img
-      src={photo}
-      alt={name}
-      width="600"
-      height="600"
-      loading="lazy"
-      decoding="async"
-      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-    />
-  </a>
+<!--
+  Phone and email are deliberately not on the card: the card is one stretched
+  link, so any second link inside it would sit under that overlay and be
+  unclickable. Contact details live on the agent's own page.
+-->
+<article class="card">
+  <div class="card__media card__media--square">
+    <img src={photo} alt={name} width="800" height="800" loading="lazy" decoding="async" />
+  </div>
 
-  <div class="flex flex-1 flex-col p-5">
-    <h3 class="font-display text-xl font-semibold tracking-tight">
-      <a href={agentHref(agent)} class="transition-colors hover:text-accent">{name}</a>
-    </h3>
-    <p class="mt-1 text-sm text-accent">{role}</p>
-    <p class="mt-3 text-sm leading-relaxed text-muted">{bioShort}</p>
-
-    <dl class="mt-auto space-y-1 border-t border-line pt-4 text-sm">
-      <div>
-        <dt class="sr-only">Phone</dt>
-        <dd>
-          <a class="transition-colors hover:text-accent" href={`tel:${phone.replace(/\s+/g, '')}`}>
-            {phone}
-          </a>
-        </dd>
-      </div>
-      <div>
-        <dt class="sr-only">Email</dt>
-        <dd class="break-words">
-          <a class="transition-colors hover:text-accent" href={`mailto:${email}`}>{email}</a>
-        </dd>
-      </div>
-    </dl>
+  <div class="card__body">
+    <h3><a class="card__link" href={agentHref(agent)}>{name}</a></h3>
+    <p class="agent-role">{role}</p>
+    <p class="card__meta">{bioShort}</p>
   </div>
 </article>
+
+<style>
+  h3 {
+    font-size: 1.125rem;
+  }
+
+  /*
+    The role sits under the name rather than opposite it: these job titles run
+    to "Director & Head of Residential Sales", which will not share a baseline
+    row with a name at card width.
+  */
+  .agent-role {
+    color: var(--ink-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+</style>

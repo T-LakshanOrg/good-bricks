@@ -30,92 +30,157 @@ const socials = Object.entries(a.socials ?? {}).filter(([, href]) => Boolean(hre
   string,
   string,
 ][];
-const socialLabels: Record<string, string> = { linkedin: 'LinkedIn', x: 'X', instagram: 'Instagram' };
+const socialLabels: Record<string, string> = {
+  linkedin: 'LinkedIn',
+  x: 'X',
+  instagram: 'Instagram',
+};
 ---
 
 <BaseLayout title={a.name} description={a.bioShort} image={a.photo}>
-  <div class="mx-auto max-w-6xl px-5 pt-8 sm:px-8 sm:pt-10">
-    <a href="/agents" class="text-sm text-muted transition-colors hover:text-accent">
-      &larr; The whole team
-    </a>
-  </div>
+  <section class="section section--lead">
+    <div class="wrap">
+      <a class="back" href="/agents">&larr; The whole team</a>
 
-  <article class="mx-auto max-w-6xl px-5 pt-6 sm:px-8">
-    <div class="grid gap-10 border-b border-line pb-12 md:grid-cols-[minmax(0,260px)_minmax(0,1fr)] md:gap-12">
-      <div class="overflow-hidden rounded-lg border border-line bg-shell">
-        <img
-          src={a.photo}
-          alt={a.name}
-          width="600"
-          height="600"
-          loading="eager"
-          decoding="async"
-          class="aspect-square w-full object-cover"
-        />
-      </div>
-
-      <div>
-        <h1 class="font-display text-4xl leading-tight font-semibold tracking-tight sm:text-5xl">
-          {a.name}
-        </h1>
-        <p class="mt-2 text-base text-accent">{a.role}</p>
-        <p class="mt-5 max-w-xl text-lg leading-relaxed text-muted">{a.bioShort}</p>
-
-        <div class="mt-7 flex flex-wrap gap-3">
-          <a
-            href={`tel:${a.phone.replace(/\s+/g, '')}`}
-            class="inline-flex items-center rounded-sm bg-accent px-5 py-2.5 text-sm font-semibold text-paper transition-colors hover:bg-accent-dark"
-          >
-            {a.phone}
-          </a>
-          <a
-            href={`mailto:${a.email}`}
-            class="inline-flex items-center rounded-sm border border-line bg-white px-5 py-2.5 text-sm font-semibold transition-colors hover:border-accent hover:text-accent"
-          >
-            {a.email}
-          </a>
+      <div class="profile">
+        <div class="profile__photo">
+          <img
+            src={a.photo}
+            alt={a.name}
+            width="900"
+            height="900"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
         </div>
 
-        {
-          socials.length > 0 && (
-            <ul class="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm">
-              {socials.map(([key, href]) => (
-                <li>
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-muted underline underline-offset-4 transition-colors hover:text-accent"
-                  >
-                    {socialLabels[key] ?? key}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )
-        }
+        <div class="profile__body">
+          <p class="field-label">{a.role}</p>
+          <h1>{a.name}</h1>
+          <p class="profile__bio">{a.bioShort}</p>
+
+          <dl class="profile__contact fields">
+            <div>
+              <dt>Phone</dt>
+              <dd><a href={`tel:${a.phone.replace(/\s+/g, '')}`}>{a.phone}</a></dd>
+            </div>
+            <div>
+              <dt>Email</dt>
+              <dd><a href={`mailto:${a.email}`}>{a.email}</a></dd>
+            </div>
+            {
+              socials.length > 0 && (
+                <div>
+                  <dt>Elsewhere</dt>
+                  <dd class="profile__socials">
+                    {socials.map(([key, href]) => (
+                      <a href={href} target="_blank" rel="noopener noreferrer">
+                        {socialLabels[key] ?? key}
+                      </a>
+                    ))}
+                  </dd>
+                </div>
+              )
+            }
+          </dl>
+
+          <div class="rich-text">
+            <Content />
+          </div>
+        </div>
       </div>
     </div>
+  </section>
 
-    <div class="prose-body mt-10 max-w-3xl text-base">
-      <Content />
+  <section class="section section--sunken">
+    <div class="wrap">
+      <SectionHeading
+        title={`${firstName}'s properties`}
+        linkHref="/properties"
+        linkText="All properties"
+      />
+
+      {
+        properties.length > 0 ? (
+          <div class="grid">
+            {properties.map((property) => (
+              <PropertyCard property={property} />
+            ))}
+          </div>
+        ) : (
+          <p class="empty">{firstName} has no properties listed at the moment.</p>
+        )
+      }
     </div>
-  </article>
-
-  <section class="mx-auto max-w-6xl px-5 pt-16 pb-4 sm:px-8">
-    <SectionHeading title={`Properties handled by ${firstName}`} />
-    {
-      properties.length > 0 ? (
-        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {properties.map((property) => (
-            <PropertyCard property={property} />
-          ))}
-        </div>
-      ) : (
-        <p class="mt-8 text-base text-muted">
-          {firstName} has no properties listed at the moment.
-        </p>
-      )
-    }
   </section>
 </BaseLayout>
+
+<style>
+  .profile {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 60rem) {
+    .profile {
+      grid-template-columns: 22rem minmax(0, 1fr);
+    }
+  }
+
+  .profile__photo {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--bg-sunken);
+  }
+
+  .profile__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .profile__body .field-label {
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+
+  .profile__bio {
+    margin-top: 1rem;
+    font-size: 1.125rem;
+    color: var(--ink-muted);
+    max-width: 44ch;
+  }
+
+  .profile__contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2.5rem;
+    margin: 2rem 0;
+    padding-block: 1.5rem;
+    border-block: 1px solid var(--line);
+  }
+
+  /* Contact details are not headings, so they keep the body face. */
+  .profile__contact dd {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 400;
+    word-break: break-word;
+  }
+
+  .profile__contact a:hover {
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .profile__socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+  }
+
+  .empty {
+    color: var(--ink-muted);
+  }
+</style>

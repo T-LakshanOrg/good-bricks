@@ -11,7 +11,10 @@ bedrooms: 0
 bathrooms: 0
 area: 21780
 featured: false
-image: /media/properties/beech-hill-plot.svg
+image: /media/properties/beech-hill-plot/01-exterior.jpg
+gallery:
+  - /media/properties/beech-hill-plot/02.jpg
+  - /media/properties/beech-hill-plot/03.jpg
 features:
   - Half-acre plot with outline planning
   - Consent for a single detached dwelling

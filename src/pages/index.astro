@@ -29,21 +29,23 @@ const agents = (await getCollection('agents')).sort((a, b) =>
     image={home.heroImage}
   />
 
-  <section class="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
-    <SectionHeading
-      title={home.latestPropertiesHeading}
-      linkHref="/properties"
-      linkText="View all properties"
-    />
-    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {properties.map((property) => <PropertyCard property={property} />)}
+  <section class="section">
+    <div class="wrap">
+      <SectionHeading
+        title={home.latestPropertiesHeading}
+        linkHref="/properties"
+        linkText="All properties"
+      />
+      <div class="grid">
+        {properties.map((property) => <PropertyCard property={property} />)}
+      </div>
     </div>
   </section>
 
-  <section class="border-t border-line bg-shell">
-    <div class="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
-      <SectionHeading title={home.agentsHeading} linkHref="/agents" linkText="View the whole team" />
-      <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+  <section class="section section--sunken">
+    <div class="wrap">
+      <SectionHeading title={home.agentsHeading} linkHref="/agents" linkText="The whole team" />
+      <div class="grid grid--four">
         {agents.map((agent) => <AgentCard agent={agent} />)}
       </div>
     </div>

@@ -1,7 +1,7 @@
 ---
 name: Daniel Okafor
 role: Senior Sales Negotiator
-photo: /media/agents/daniel-okafor.svg
+photo: /media/agents/daniel-okafor.jpg
 phone: "01179 224 119"
 email: daniel@goodbricks.co.uk
 bioShort: New-build and city-centre apartment specialist, and the person to ask about chains.

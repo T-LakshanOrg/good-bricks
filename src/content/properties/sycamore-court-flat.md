@@ -11,7 +11,11 @@ bedrooms: 2
 bathrooms: 2
 area: 810
 featured: true
-image: /media/properties/sycamore-court-flat.svg
+image: /media/properties/sycamore-court-flat/01-exterior.jpg
+gallery:
+  - /media/properties/sycamore-court-flat/02.jpg
+  - /media/properties/sycamore-court-flat/03.jpg
+  - /media/properties/sycamore-court-flat/04.jpg
 features:
   - Second floor with lift access
   - Allocated underground parking space

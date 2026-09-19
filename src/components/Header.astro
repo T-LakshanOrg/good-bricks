@@ -10,36 +10,16 @@ const current = Astro.url.pathname.replace(/\/+$/, '') || '/';
 const isActive = (href: string) => current === href || current.startsWith(`${href}/`);
 ---
 
-<header class="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur">
-  <div
-    class="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-8 sm:py-4"
-  >
-    <a href="/" class="group flex shrink-0 items-center gap-3">
-      <span
-        class="flex h-9 w-9 items-center justify-center rounded-sm bg-accent font-display text-base font-semibold text-paper transition-colors group-hover:bg-accent-dark"
-        aria-hidden="true">GB</span
-      >
-      <span class="flex flex-col leading-tight">
-        <span class="font-display text-lg font-semibold tracking-tight whitespace-nowrap">{site.siteName}</span>
-        <span class="hidden text-xs text-muted sm:block">{site.tagline}</span>
-      </span>
-    </a>
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a class="wordmark" href="/">{site.siteName}</a>
 
-    <nav aria-label="Main" class="flex items-center sm:justify-end">
-      <ul class="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm sm:justify-end">
+    <nav aria-label="Main">
+      <ul>
         {
           site.navItems.map((item) => (
             <li>
-              <a
-                href={item.href}
-                aria-current={isActive(item.href) ? 'page' : undefined}
-                class:list={[
-                  'inline-block border-b-2 py-1 transition-colors hover:text-accent',
-                  isActive(item.href)
-                    ? 'border-accent text-accent'
-                    : 'border-transparent text-muted',
-                ]}
-              >
+              <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
                 {item.label}
               </a>
             </li>
@@ -49,3 +29,66 @@ const isActive = (href: string) => current === href || current.startsWith(`${hre
     </nav>
   </div>
 </header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    min-height: 4.5rem;
+  }
+
+  .wordmark {
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  nav ul {
+    display: flex;
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  nav a {
+    font-size: 0.9375rem;
+    padding-block: 0.25rem;
+    border-bottom: 1px solid transparent;
+    color: var(--ink-muted);
+  }
+
+  nav a:hover,
+  nav a[aria-current='page'] {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+  }
+
+  /* Narrow phones: drop the nav onto its own row rather than squeezing it
+     against the wordmark. With a two-item nav this is the whole mobile
+     treatment — no disclosure button needed. */
+  @media (max-width: 30rem) {
+    .site-header__inner {
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      min-height: 0;
+      padding-block: 0.875rem;
+    }
+
+    nav ul {
+      gap: 1.5rem;
+    }
+  }
+</style>

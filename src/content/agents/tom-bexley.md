@@ -1,7 +1,7 @@
 ---
 name: Tom Bexley
 role: Commercial & Land Consultant
-photo: /media/agents/tom-bexley.svg
+photo: /media/agents/tom-bexley.jpg
 phone: "01179 224 121"
 email: tom@goodbricks.co.uk
 bioShort: Commercial units, development plots and anything that needs a planning conversation.

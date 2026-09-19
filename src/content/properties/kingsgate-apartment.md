@@ -11,7 +11,11 @@ bedrooms: 1
 bathrooms: 1
 area: 540
 featured: false
-image: /media/properties/kingsgate-apartment.svg
+image: /media/properties/kingsgate-apartment/01-exterior.jpg
+gallery:
+  - /media/properties/kingsgate-apartment/02.jpg
+  - /media/properties/kingsgate-apartment/03.jpg
+  - /media/properties/kingsgate-apartment/04.jpg
 features:
   - Furnished, available immediately
   - Concierge and secure bike store

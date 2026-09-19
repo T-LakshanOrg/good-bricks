@@ -3,56 +3,180 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import PropertyCard from '../../components/PropertyCard.astro';
-import { STATUS_LABELS, STATUS_ORDER, byNewest } from '../../lib/content';
+import { STATUS_LABELS, STATUS_ORDER, TYPE_LABELS, byNewest } from '../../lib/content';
 
 const properties = (await getCollection('properties')).sort(byNewest);
 
 /**
- * Grouped by status so the page needs no JavaScript: the filter links are plain
- * anchors down to each group's heading.
+ * Only offer a filter for something that is actually on the page: a chip that
+ * can only ever return nothing is worse than no chip.
  */
-const groups = STATUS_ORDER.map((status) => ({
-  status,
-  label: STATUS_LABELS[status],
-  items: properties.filter((property) => property.data.status === status),
-})).filter((group) => group.items.length > 0);
+const statuses = STATUS_ORDER.filter((status) =>
+  properties.some((property) => property.data.status === status)
+);
+
+const types = (Object.keys(TYPE_LABELS) as (keyof typeof TYPE_LABELS)[]).filter((type) =>
+  properties.some((property) => property.data.type === type)
+);
 ---
 
-<BaseLayout
-  title="Properties"
-  description={`Every property currently listed with us, newest first.`}
->
-  <section class="mx-auto max-w-6xl px-5 pt-12 pb-16 sm:px-8 sm:pt-16 sm:py-20">
-    <SectionHeading
-      title="Properties"
-      intro="Everything we are currently marketing, newest first. Jump straight to a group, or scroll the lot."
-    />
+<BaseLayout title="Properties" description="Every property currently listed with us, newest first.">
+  <section class="section section--lead">
+    <div class="wrap">
+      <SectionHeading
+        as="h1"
+        title="Properties"
+        intro="Everything we are currently marketing, newest first. Narrow it down by status or by kind of property."
+      />
 
-    <nav aria-label="Filter by status" class="mt-6 flex flex-wrap gap-2">
-      {
-        groups.map((group) => (
-          <a
-            href={`#${group.status}`}
-            class="rounded-full border border-line bg-white px-4 py-1.5 text-sm text-muted transition-colors hover:border-accent hover:text-accent"
-          >
-            {group.label}
-            <span class="ml-1 text-xs text-muted">({group.items.length})</span>
-          </a>
-        ))
-      }
-    </nav>
-
-    {
-      groups.map((group) => (
-        <div class="mt-14 scroll-mt-28" id={group.status}>
-          <h2 class="font-display text-2xl font-semibold tracking-tight">{group.label}</h2>
-          <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {group.items.map((property) => (
-              <PropertyCard property={property} />
-            ))}
+      <div class="filters">
+        <div class="filters__group">
+          <span class="field-label" id="filter-status">Status</span>
+          <div class="filters__chips" role="group" aria-labelledby="filter-status">
+            <button class="chip" type="button" data-filter="status" data-value="all" aria-pressed="true">
+              All
+            </button>
+            {
+              statuses.map((status) => (
+                <button class="chip" type="button" data-filter="status" data-value={status} aria-pressed="false">
+                  {STATUS_LABELS[status]}
+                </button>
+              ))
+            }
           </div>
         </div>
-      ))
-    }
+
+        <div class="filters__group">
+          <span class="field-label" id="filter-type">Type</span>
+          <div class="filters__chips" role="group" aria-labelledby="filter-type">
+            <button class="chip" type="button" data-filter="type" data-value="all" aria-pressed="true">
+              All
+            </button>
+            {
+              types.map((type) => (
+                <button class="chip" type="button" data-filter="type" data-value={type} aria-pressed="false">
+                  {TYPE_LABELS[type]}
+                </button>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+
+      <p class="result-count" data-result-count aria-live="polite">
+        Showing all {properties.length} properties
+      </p>
+
+      <div class="grid" data-property-grid>
+        {properties.map((property) => <PropertyCard property={property} />)}
+      </div>
+
+      <p class="empty" data-empty hidden>No properties match those filters.</p>
+    </div>
   </section>
 </BaseLayout>
+
+<script>
+  const grid = document.querySelector('[data-property-grid]');
+  const cards = Array.from(grid?.children ?? []) as HTMLElement[];
+  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-filter]'));
+  const count = document.querySelector('[data-result-count]');
+  const empty = document.querySelector('[data-empty]');
+
+  const active = { status: 'all', type: 'all' };
+
+  function apply() {
+    let shown = 0;
+
+    for (const card of cards) {
+      const matches =
+        (active.status === 'all' || card.dataset.status === active.status) &&
+        (active.type === 'all' || card.dataset.type === active.type);
+
+      card.hidden = !matches;
+      if (matches) shown += 1;
+    }
+
+    const filtered = active.status !== 'all' || active.type !== 'all';
+    if (count) {
+      count.textContent = filtered
+        ? `Showing ${shown} of ${cards.length} properties`
+        : `Showing all ${cards.length} properties`;
+    }
+    if (empty) empty.toggleAttribute('hidden', shown > 0);
+  }
+
+  for (const button of buttons) {
+    button.addEventListener('click', () => {
+      const group = button.dataset.filter as 'status' | 'type';
+      active[group] = button.dataset.value ?? 'all';
+
+      for (const sibling of buttons) {
+        if (sibling.dataset.filter === group) {
+          sibling.setAttribute('aria-pressed', String(sibling === button));
+        }
+      }
+
+      apply();
+    });
+  }
+</script>
+
+<style>
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem 3rem;
+    padding-block: 1.25rem;
+    border-block: 1px solid var(--line);
+  }
+
+  .filters__group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .filters__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .chip {
+    padding: 0.5rem 0.875rem;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    line-height: 1;
+    background: transparent;
+    color: var(--ink-muted);
+    border: 1px solid var(--line);
+    cursor: pointer;
+    transition:
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .chip:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  .chip[aria-pressed='true'] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+  }
+
+  .result-count {
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+    margin-block: 1.5rem;
+  }
+
+  .empty {
+    padding-block: 3rem;
+    color: var(--ink-muted);
+  }
+</style>

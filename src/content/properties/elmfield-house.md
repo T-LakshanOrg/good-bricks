@@ -11,10 +11,11 @@ bedrooms: 5
 bathrooms: 3
 area: 2340
 featured: true
-image: /media/properties/elmfield-house.svg
+image: /media/properties/elmfield-house/01-exterior.jpg
 gallery:
-  - /media/properties/elmfield-house.svg
-  - /media/properties/orchard-lane-cottage.svg
+  - /media/properties/elmfield-house/02.jpg
+  - /media/properties/elmfield-house/03.jpg
+  - /media/properties/elmfield-house/04.jpg
 features:
   - Original sash windows and cornicing
   - South-facing walled garden

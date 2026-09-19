@@ -11,7 +11,11 @@ bedrooms: 0
 bathrooms: 2
 area: 6400
 featured: false
-image: /media/properties/harbourside-warehouse.svg
+image: /media/properties/harbourside-warehouse/01-exterior.jpg
+gallery:
+  - /media/properties/harbourside-warehouse/02.jpg
+  - /media/properties/harbourside-warehouse/03.jpg
+  - /media/properties/harbourside-warehouse/04.jpg
 features:
   - Grade II listed brick and timber structure
   - Three-phase power installed

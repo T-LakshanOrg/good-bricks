@@ -7,59 +7,120 @@ interface Props {
 
 const { site } = Astro.props;
 const year = new Date().getFullYear();
+const telHref = `tel:${site.contactPhone.replace(/\s+/g, '')}`;
 ---
 
-<footer class="mt-24 border-t border-line bg-shell">
-  <div class="mx-auto max-w-6xl px-5 py-14 sm:px-8">
-    <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-      <div class="lg:col-span-2">
-        <p class="font-display text-2xl font-semibold tracking-tight">{site.siteName}</p>
-        <p class="mt-3 max-w-sm text-sm leading-relaxed text-muted">{site.tagline}</p>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="site-footer__top">
+      <div class="site-footer__brand">
+        <p class="wordmark">{site.siteName}</p>
+        <p class="site-footer__tagline">{site.tagline}</p>
       </div>
 
-      <div>
-        <h2 class="text-xs font-semibold tracking-[0.14em] text-muted uppercase">Contact</h2>
-        <ul class="mt-4 space-y-2 text-sm">
-          <li>
-            <a class="transition-colors hover:text-accent" href={`tel:${site.contactPhone.replace(/\s+/g, '')}`}>
-              {site.contactPhone}
-            </a>
-          </li>
-          <li>
-            <a class="transition-colors hover:text-accent" href={`mailto:${site.contactEmail}`}>
-              {site.contactEmail}
-            </a>
-          </li>
-          <li class="pt-1 leading-relaxed text-muted">{site.address}</li>
+      <div class="site-footer__col">
+        <h2 class="field-label">Contact</h2>
+        <ul>
+          <li><a href={telHref}>{site.contactPhone}</a></li>
+          <li><a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a></li>
+          <li class="site-footer__address">{site.address}</li>
         </ul>
       </div>
 
-      <div>
-        <h2 class="text-xs font-semibold tracking-[0.14em] text-muted uppercase">Follow</h2>
-        <ul class="mt-4 space-y-2 text-sm">
-          {
-            site.socialLinks.map((link) => (
-              <li>
-                <a
-                  class="transition-colors hover:text-accent"
-                  href={link.href}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
+      {
+        site.socialLinks.length > 0 && (
+          <div class="site-footer__col">
+            <h2 class="field-label">Follow</h2>
+            <ul>
+              {site.socialLinks.map((link) => (
+                <li>
+                  <a href={link.href} target="_blank" rel="noopener noreferrer">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
     </div>
 
-    <div
-      class="mt-12 flex flex-col gap-3 border-t border-line pt-6 text-xs leading-relaxed text-muted sm:flex-row sm:items-center sm:justify-between"
-    >
-      <p class="max-w-xl">{site.footerText}</p>
+    <div class="site-footer__bottom">
+      <p>{site.footerText}</p>
       <p>&copy; {year} {site.siteName}</p>
     </div>
   </div>
 </footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--section-gap);
+    border-top: 1px solid var(--line);
+    padding-top: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  /* Explicit tracks rather than auto-fit: an auto-fit count that lands on
+     three at tablet width strands the last column on a row of its own. */
+  .site-footer__top {
+    display: grid;
+    gap: 2rem 3rem;
+    grid-template-columns: 1fr;
+    padding-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  /* The brand block carries a sentence, so it earns the wider track. */
+  @media (min-width: 40rem) {
+    .site-footer__top {
+      grid-template-columns: 2fr 1fr 1fr;
+    }
+  }
+
+  .site-footer__brand {
+    min-width: 0;
+  }
+
+  .wordmark {
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .site-footer__tagline {
+    margin-top: 0.75rem;
+    max-width: 34ch;
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+  }
+
+  .site-footer__col ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.875rem;
+  }
+
+  .site-footer__col a:hover {
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .site-footer__address {
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+
+  .site-footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    border-top: 1px solid var(--line);
+    padding-block: 1.5rem;
+    color: var(--ink-muted);
+    font-size: 0.8125rem;
+  }
+</style>

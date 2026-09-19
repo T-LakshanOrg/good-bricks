@@ -5,45 +5,77 @@ interface Props {
   ctaText: string;
   ctaLink: string;
   image: string;
-  eyebrow?: string;
 }
 
-const { heading, subheading, ctaText, ctaLink, image, eyebrow } = Astro.props;
+const { heading, subheading, ctaText, ctaLink, image } = Astro.props;
 ---
 
-<section class="border-b border-line bg-shell">
-  <div class="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:px-8 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-14">
-    <div>
-      {
-        eyebrow && (
-          <p class="text-xs font-semibold tracking-[0.18em] text-accent uppercase">{eyebrow}</p>
-        )
-      }
-      <h1
-        class="mt-4 font-display text-4xl leading-[1.08] font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl"
-      >
-        {heading}
-      </h1>
-      <p class="mt-5 max-w-xl text-base leading-relaxed text-muted sm:text-lg">{subheading}</p>
-      <a
-        href={ctaLink}
-        class="mt-8 inline-flex items-center gap-2 rounded-sm bg-accent px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-accent-dark"
-      >
-        {ctaText}
-        <span aria-hidden="true">&rarr;</span>
-      </a>
-    </div>
-
-    <div class="overflow-hidden rounded-lg border border-line bg-paper">
-      <img
-        src={image}
-        alt=""
-        width="1600"
-        height="900"
-        loading="eager"
-        decoding="async"
-        class="aspect-[16/10] h-full w-full object-cover"
-      />
+<section class="hero">
+  <div class="wrap">
+    <h1>{heading}</h1>
+    <div class="hero__foot">
+      <p>{subheading}</p>
+      <a class="btn" href={ctaLink}>{ctaText} <span aria-hidden="true">&rarr;</span></a>
     </div>
   </div>
+
+  <!--
+    Full-bleed, outside the wrap. The photograph is decorative here — the h1
+    directly above it already says what the page is — so alt is empty.
+  -->
+  <div class="hero__media">
+    <img
+      src={image}
+      alt=""
+      width="1800"
+      height="771"
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    />
+  </div>
 </section>
+
+<style>
+  .hero {
+    padding-top: clamp(3.5rem, 8vw, 6.5rem);
+  }
+
+  .hero h1 {
+    max-width: 18ch;
+  }
+
+  .hero__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem 3rem;
+    margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .hero__foot p {
+    max-width: 44ch;
+    color: var(--ink-muted);
+  }
+
+  .hero__media {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    aspect-ratio: 21 / 9;
+    overflow: hidden;
+    background: var(--bg-sunken);
+  }
+
+  /* A 21/9 band is a letterbox slot on a phone; give it more height there. */
+  @media (max-width: 40rem) {
+    .hero__media {
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  .hero__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>

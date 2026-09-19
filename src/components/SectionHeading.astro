@@ -1,31 +1,21 @@
 ---
 interface Props {
   title: string;
+  /** A supporting line, or a link, sits to the right — never both. */
   intro?: string;
   linkHref?: string;
   linkText?: string;
   id?: string;
+  /** A list page's heading is the page's h1; a home-page section's is an h2. */
+  as?: 'h1' | 'h2';
 }
 
-const { title, intro, linkHref, linkText, id } = Astro.props;
+const { title, intro, linkHref, linkText, id, as: Heading = 'h2' } = Astro.props;
+const hasLink = Boolean(linkHref && linkText);
 ---
 
-<div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-3 border-b border-line pb-5">
-  <div class="max-w-2xl">
-    <h2 id={id} class="font-display text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h2>
-    {intro && <p class="mt-3 text-base leading-relaxed text-muted">{intro}</p>}
-  </div>
-  {
-    linkHref && linkText && (
-      <a
-        href={linkHref}
-        class="group inline-flex shrink-0 items-center gap-2 text-sm font-medium text-accent transition-colors hover:text-accent-dark"
-      >
-        {linkText}
-        <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">
-          &rarr;
-        </span>
-      </a>
-    )
-  }
+<div class="section-head">
+  <Heading id={id}>{title}</Heading>
+  {hasLink && <a class="link-arrow" href={linkHref}>{linkText} &rarr;</a>}
+  {!hasLink && intro && <p>{intro}</p>}
 </div>

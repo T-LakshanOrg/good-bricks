@@ -3,13 +3,7 @@ import type { GetStaticPaths } from 'astro';
 import { getCollection, getEntry, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import StatusBadge from '../../components/StatusBadge.astro';
-import {
-  TYPE_LABELS,
-  agentHref,
-  formatArea,
-  formatPrice,
-  propertySlug,
-} from '../../lib/content';
+import { TYPE_LABELS, agentHref, formatArea, formatPrice, propertySlug } from '../../lib/content';
 
 export const getStaticPaths = (async () => {
   const properties = await getCollection('properties');
@@ -24,10 +18,15 @@ const d = property.data;
 const { Content } = await render(property);
 const agent = await getEntry(d.agent);
 
-const images = d.gallery?.length ? d.gallery : [d.image];
-const [mainImage, ...rest] = images;
+/**
+ * The featured image always leads, whether or not the gallery repeats it —
+ * a gallery listing only the other views must not drop it from the page.
+ */
+const images = [d.image, ...(d.gallery ?? []).filter((photo) => photo !== d.image)];
+const [leadImage, ...rest] = images;
 
-const facts = [
+// Price and status are already in the header, so they are left out here.
+const specs = [
   { label: 'Type', value: TYPE_LABELS[d.type] },
   d.bedrooms > 0 ? { label: 'Bedrooms', value: String(d.bedrooms) } : null,
   d.bathrooms > 0 ? { label: 'Bathrooms', value: String(d.bathrooms) } : null,
@@ -36,151 +35,296 @@ const facts = [
 ].filter(Boolean) as { label: string; value: string }[];
 ---
 
-<BaseLayout title={d.title} description={`${d.address}, ${d.city} — ${formatPrice(d.price, d.currency, d.status)}`} image={d.image}>
-  <div class="mx-auto max-w-6xl px-5 pt-8 sm:px-8 sm:pt-10">
-    <a href="/properties" class="text-sm text-muted transition-colors hover:text-accent">
-      &larr; All properties
-    </a>
-  </div>
+<BaseLayout
+  title={d.title}
+  description={`${d.address}, ${d.city} — ${formatPrice(d.price, d.currency, d.status)}`}
+  image={d.image}
+>
+  <article class="section section--lead">
+    <div class="wrap">
+      <a class="back" href="/properties">&larr; All properties</a>
 
-  <article class="mx-auto max-w-6xl px-5 pt-6 pb-4 sm:px-8">
-    <header class="flex flex-wrap items-start justify-between gap-x-8 gap-y-4 border-b border-line pb-8">
-      <div class="max-w-2xl">
-        <StatusBadge status={d.status} />
-        <h1 class="mt-4 font-display text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-5xl">
-          {d.title}
-        </h1>
-        <p class="mt-3 text-base text-muted">{d.address}, {d.city} {d.postcode}</p>
-      </div>
-      <p class="font-display text-3xl font-semibold text-accent sm:text-4xl">
-        {formatPrice(d.price, d.currency, d.status)}
-      </p>
-    </header>
-
-    <div class="mt-8 overflow-hidden rounded-lg border border-line bg-shell">
-      <img
-        src={mainImage}
-        alt={d.title}
-        width="1200"
-        height="800"
-        loading="eager"
-        decoding="async"
-        class="aspect-[3/2] w-full object-cover"
-      />
-    </div>
-
-    {
-      rest.length > 0 && (
-        <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {rest.map((src, i) => (
-            <div class="overflow-hidden rounded-md border border-line bg-shell">
-              <img
-                src={src}
-                alt={`${d.title} — photo ${i + 2}`}
-                width="1200"
-                height="800"
-                loading="lazy"
-                decoding="async"
-                class="aspect-[3/2] w-full object-cover"
-              />
-            </div>
-          ))}
+      <header class="head">
+        <div>
+          <StatusBadge status={d.status} class="head__badge" />
+          <h1>{d.title}</h1>
+          <p class="head__address">{d.address}, {d.city} {d.postcode}</p>
         </div>
-      )
-    }
+        <p class="head__price">{formatPrice(d.price, d.currency, d.status)}</p>
+      </header>
 
-    <div class="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1.9fr)_minmax(0,1fr)] lg:gap-14">
-      <div>
-        <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-3">
-          {
-            facts.map((fact) => (
-              <div class="bg-white px-4 py-4">
-                <dt class="text-[0.68rem] font-semibold tracking-[0.12em] text-muted uppercase">
-                  {fact.label}
-                </dt>
-                <dd class="mt-1 font-display text-lg font-medium">{fact.value}</dd>
-              </div>
-            ))
-          }
-        </dl>
-
-        <div class="prose-body mt-10 max-w-none text-base">
-          <Content />
+      <div class="gallery">
+        <div class="gallery__lead">
+          <img
+            src={leadImage}
+            alt={`${d.title} — ${d.address}, ${d.city}`}
+            width="1800"
+            height="1125"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
         </div>
 
         {
-          d.features && d.features.length > 0 && (
-            <section class="mt-10 border-t border-line pt-8">
-              <h2 class="font-display text-2xl font-semibold tracking-tight">Key features</h2>
-              <ul class="mt-5 grid gap-x-8 gap-y-3 sm:grid-cols-2">
-                {d.features.map((feature) => (
-                  <li class="flex gap-3 text-sm leading-relaxed">
-                    <span aria-hidden="true" class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
+          rest.length > 0 && (
+            <div class="gallery__rest">
+              {rest.map((src, i) => (
+                <img
+                  src={src}
+                  alt={`${d.title} — photo ${i + 2}`}
+                  width="800"
+                  height="600"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ))}
+            </div>
           )
         }
       </div>
 
-      {
-        agent && (
-          <aside class="lg:sticky lg:top-28 lg:self-start">
-            <div class="rounded-lg border border-line bg-white p-6">
-              <h2 class="text-[0.68rem] font-semibold tracking-[0.14em] text-muted uppercase">
-                Your agent
-              </h2>
-              <div class="mt-5 flex items-center gap-4">
+      <div class="detail">
+        <div class="detail__main">
+          <dl class="specs fields">
+            {
+              specs.map((spec) => (
+                <div>
+                  <dt>{spec.label}</dt>
+                  <dd>{spec.value}</dd>
+                </div>
+              ))
+            }
+          </dl>
+
+          <div class="rich-text">
+            <Content />
+          </div>
+
+          {
+            d.features && d.features.length > 0 && (
+              <section class="features">
+                <h2>Key features</h2>
+                <ul>
+                  {d.features.map((feature) => (
+                    <li>{feature}</li>
+                  ))}
+                </ul>
+              </section>
+            )
+          }
+        </div>
+
+        {
+          agent && (
+            <aside class="agent">
+              <div class="agent__photo">
                 <img
                   src={agent.data.photo}
-                  alt={agent.data.name}
-                  width="600"
-                  height="600"
+                  alt=""
+                  width="800"
+                  height="800"
                   loading="lazy"
                   decoding="async"
-                  class="h-20 w-20 shrink-0 rounded-full border border-line object-cover"
                 />
-                <div>
-                  <p class="font-display text-xl font-semibold tracking-tight">{agent.data.name}</p>
-                  <p class="mt-0.5 text-sm text-accent">{agent.data.role}</p>
-                </div>
               </div>
 
-              <dl class="mt-5 space-y-2 border-t border-line pt-5 text-sm">
-                <div>
-                  <dt class="sr-only">Phone</dt>
-                  <dd>
-                    <a
-                      class="transition-colors hover:text-accent"
-                      href={`tel:${agent.data.phone.replace(/\s+/g, '')}`}
-                    >
-                      {agent.data.phone}
-                    </a>
-                  </dd>
-                </div>
-                <div>
-                  <dt class="sr-only">Email</dt>
-                  <dd class="break-words">
-                    <a class="transition-colors hover:text-accent" href={`mailto:${agent.data.email}`}>
-                      {agent.data.email}
-                    </a>
-                  </dd>
-                </div>
-              </dl>
+              <div class="agent__body">
+                <p class="field-label">Listing agent</p>
+                <h2>
+                  <a href={agentHref(agent)}>{agent.data.name}</a>
+                </h2>
+                <p class="agent__role">{agent.data.role}</p>
 
-              <a
-                href={agentHref(agent)}
-                class="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-sm bg-accent px-5 py-3 text-sm font-semibold text-paper transition-colors hover:bg-accent-dark"
-              >
-                About {agent.data.name.split(' ')[0]}
-                <span aria-hidden="true">&rarr;</span>
-              </a>
-            </div>
-          </aside>
-        )
-      }
+                <p class="agent__contact">
+                  <a href={`tel:${agent.data.phone.replace(/\s+/g, '')}`}>{agent.data.phone}</a>
+                  <a href={`mailto:${agent.data.email}`}>{agent.data.email}</a>
+                </p>
+
+                <a class="btn btn--ghost" href={agentHref(agent)}>
+                  About {agent.data.name.split(' ')[0]}
+                </a>
+              </div>
+            </aside>
+          )
+        }
+      </div>
     </div>
   </article>
 </BaseLayout>
+
+<style>
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  /* Flush left with the title below it — the card's inset padding is wrong
+     once the badge is sitting on the page rather than on a photograph. */
+  .head :global(.head__badge) {
+    padding-left: 0;
+    margin-bottom: 0.75rem;
+  }
+
+  .head__address {
+    margin-top: 0.75rem;
+    color: var(--ink-muted);
+  }
+
+  .head__price {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  .gallery {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .gallery__lead {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--bg-sunken);
+  }
+
+  /* A fixed track, not auto-fit: a property with one extra photo would
+     otherwise get a single thumbnail stretched as wide as the lead image. */
+  .gallery__rest {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 40rem) {
+    .gallery__rest {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .gallery__rest img {
+    aspect-ratio: 4 / 3;
+    background: var(--bg-sunken);
+  }
+
+  .gallery img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .detail {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 60rem) {
+    .detail {
+      grid-template-columns: minmax(0, 1fr) 18rem;
+    }
+
+    .agent {
+      position: sticky;
+      top: 6.5rem;
+    }
+  }
+
+  .specs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: 1.5rem;
+    margin: 0 0 clamp(2rem, 4vw, 3rem);
+    padding-bottom: clamp(2rem, 4vw, 3rem);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .features {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    padding-top: clamp(2rem, 4vw, 3rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .features h2 {
+    font-size: clamp(1.375rem, 2.2vw, 1.75rem);
+  }
+
+  .features ul {
+    display: grid;
+    gap: 0.75rem 2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    margin-top: 1.5rem;
+    padding: 0;
+    list-style: none;
+    font-size: 0.9375rem;
+  }
+
+  .features li {
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .agent {
+    border: 1px solid var(--line);
+    background: var(--bg);
+  }
+
+  /* Decorative: the name and the button below it both link to the agent, so
+     the photograph is not a third link to the same place. */
+  .agent__photo {
+    display: block;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--bg-sunken);
+  }
+
+  .agent__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .agent__body {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 0.5rem;
+    padding: 1.25rem;
+  }
+
+  .agent h2 {
+    font-size: 1.25rem;
+  }
+
+  .agent h2 a:hover {
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .agent__role,
+  .agent__contact {
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+  }
+
+  .agent__contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    word-break: break-word;
+  }
+
+  .agent__contact a:hover {
+    color: var(--ink);
+  }
+
+  .agent .btn {
+    margin-top: 0.5rem;
+  }
+</style>

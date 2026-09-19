@@ -1,7 +1,7 @@
 ---
 name: Priya Raman
 role: Lettings Manager
-photo: /media/agents/priya-raman.svg
+photo: /media/agents/priya-raman.jpg
 phone: "01179 224 120"
 email: priya@goodbricks.co.uk
 bioShort: Runs the lettings book and keeps landlords the right side of every new regulation.

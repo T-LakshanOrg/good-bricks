@@ -11,7 +11,11 @@ bedrooms: 3
 bathrooms: 2
 area: 1290
 featured: false
-image: /media/properties/willow-bungalow.svg
+image: /media/properties/willow-bungalow/01-exterior.jpg
+gallery:
+  - /media/properties/willow-bungalow/02.jpg
+  - /media/properties/willow-bungalow/03.jpg
+  - /media/properties/willow-bungalow/04.jpg
 features:
   - Level access throughout
   - Detached double garage

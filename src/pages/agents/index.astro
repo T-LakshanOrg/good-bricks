@@ -10,13 +10,16 @@ const agents = (await getCollection('agents')).sort((a, b) =>
 ---
 
 <BaseLayout title="Our team" description="The people you will actually be dealing with.">
-  <section class="mx-auto max-w-6xl px-5 pt-12 pb-16 sm:px-8 sm:pt-16 sm:py-20">
-    <SectionHeading
-      title="Our team"
-      intro="The people you will actually be dealing with. Call any of them directly."
-    />
-    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      {agents.map((agent) => <AgentCard agent={agent} />)}
+  <section class="section section--lead">
+    <div class="wrap">
+      <SectionHeading
+        as="h1"
+        title="Our team"
+        intro="The people you will actually be dealing with. Call any of them directly."
+      />
+      <div class="grid grid--four">
+        {agents.map((agent) => <AgentCard agent={agent} />)}
+      </div>
     </div>
   </section>
 </BaseLayout>

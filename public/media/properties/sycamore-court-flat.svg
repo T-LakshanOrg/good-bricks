@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" role="img" aria-label="Sycamore Court">
-  <rect width="1200" height="800" fill="#E8ECEA"/>
-  <rect x="0" y="560" width="1200" height="240" fill="#D2D9D5"/>
-  <path d="M340 560 V360 L600 210 L860 360 V560 Z" fill="#76857E" opacity="0.85"/>
-  <rect x="470" y="430" width="90" height="130" fill="#E8ECEA" opacity="0.7"/>
-  <rect x="630" y="430" width="110" height="80" fill="#E8ECEA" opacity="0.55"/>
-  <rect x="300" y="330" width="600" height="6" fill="#E8ECEA" opacity="0.35"/>
-  <text x="600" y="700" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="34" fill="#76857E">Sycamore Court</text>
-</svg>
