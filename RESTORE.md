@@ -144,3 +144,69 @@ Came back with the backup file: the whole CMS code, all branches, all tags, all 
 
 Had to be redone: the Railway source link, the three backup secrets. Lost for good: the fork link to the public project, which is cosmetic.
 
+## Part 3: The CMS itself, when Railway is lost
+
+Use this part when the Railway project or account that runs the CMS is gone, or when you want to move the CMS to a new Railway account. This was tested for real by rebuilding the CMS in a brand-new Railway account from the backups alone, then moving the CMS address across.
+
+You need the newest database file from the bucket, the CMS settings from the password manager, and the R2 key. The CMS code comes from GitHub, or from the cms folder in the bucket if GitHub is gone too, in which case do Part 2 first.
+
+**If you still have the old Railway account**, take a fresh database backup before starting: open the Backup CRON service and click Run Now. A new file appears in the bucket's cms/database folder within a minute.
+
+### Step 1: Download the database backup
+
+In the bucket, open cms, then database, and download the newest file. Its name is the date and time it was taken. Ask your agent to check it: it should be a complete Postgres archive with a dozen tables. In the test it was, and the agent unzipped it ready for loading.
+
+### Step 2: Deploy the CMS code
+
+In the new Railway account, create a project and choose Deploy from GitHub repo. Connect GitHub, pick the organisation and the CMS repository, and deploy. The first build fails, because the CMS has no settings yet. That is expected.
+
+### Step 3: Create the database and load the backup
+
+1. In the same project, add PostgreSQL from Railway's database menu.
+2. Open it, go to Settings, then Networking, and click Add Public Access. Then press Deploy at the top of the project to activate it. This opens a door to the database from outside, which we close again at the end.
+3. Click Connect on the Postgres service, choose Public Network, and copy the connection URL. It contains the database password, so treat it as a secret: do not paste it into chats or documents.
+4. On a computer with the Postgres tools installed, run the restore program against that URL with the unzipped backup file. Your agent writes the command for you, with a placeholder where the URL goes. You paste the URL in and run it yourself. It prints nothing when it works.
+5. Ask your agent for a check query and run it the same way. In the test it showed three user accounts, one collaborator, and three sessions, exactly what the live CMS had.
+
+Two things caught us during the test. Railway's own Database tab may sit on "attempting to connect" for a long time; it says nothing about whether the load worked, so use the check query instead. And a command with quote marks inside quote marks confused the terminal; keeping the query in a file avoids that.
+
+### Step 4: Give the CMS its settings
+
+1. Open the CMS service, then Variables, then Raw Editor. Paste the full set of settings from the password manager.
+2. Make sure the database line points at the new database. It should read `DATABASE_URL="${{Postgres.DATABASE_URL}}"`. Railway fills in the real address itself.
+3. Open the CMS service's Settings. Under Build, set Custom Build Command to `npx next build`. Under Deploy, set Pre-deploy Command to `npm run db:migrate`.
+4. Press Deploy at the top of the project and wait for the deployment to complete.
+
+The two commands in step 3 matter. Without them the build fails at the very end with no clear message. The reason: the CMS updates its database tables as part of its normal build, but Railway does not let a build reach the project's database. The first command builds the CMS without that update. The second runs the update straight after, when the database can be reached. In the test these two settings existed only in the old Railway project and in nobody's notes, and the build failed twice before we found them by looking at the old project. If the old project had really been gone, this would have cost hours.
+
+To check the CMS is running before moving its address: in the CMS service's Settings, under Networking, click Generate Domain, then press Deploy to apply it. Open the address Railway gives you. The sign-in page should appear. Signing in will not work yet, because the CMS expects its real address.
+
+### Step 5: Move the CMS address across
+
+1. In the new CMS service's Settings, under Networking, add the CMS's address as a custom domain, with the same port as the generated domain. If Railway says "Not available", the address is still attached to the old Railway service. Remove it there first. If the old project was deleted, the address is already free. If the old account is locked rather than deleted, ask Railway support to release it.
+2. Railway shows two DNS records: a CNAME for the address, and a TXT record beginning `_railway-verify`. Both already exist in Cloudflare from the original setup, holding the old project's values. Edit them to the new values rather than adding new ones. Keep the proxy switch grey, DNS only. Skip Railway's one-click Cloudflare button; it asks for access to your Cloudflare account and the manual edit takes a minute.
+3. Wait. In the test the DNS change was instant, but the address did not answer for about four minutes while Railway issued the security certificate.
+4. Open the CMS address. The sign-in page should load.
+
+Administrators have to sign in again, because the saved sign-ins in the backup are older than the ones in their browsers. In the test, the administrator signed in with GitHub, saw the site and its collaborator list, and saved an edit that reached the live website.
+
+Collaborators sign in the same way as before, by email with a one-time code, at the CMS's own address. In the test the collaborator signed in, saw the site, and saved an edit that reached the live website. Their record came back with the database, so nobody had to be invited again. One trap: signing in at the public Pages CMS website instead of your own CMS address shows "No repositories yet", because that is a different CMS with a different database.
+
+### Step 6: Put the database backup helper back
+
+The new Railway project has no backup helper yet, so the new database is not being backed up. Add it the same way as in the original setup: deploy the Postgres S3 Backups template into the project, give it the R2 key and bucket details from the password manager, point its database address at the new Postgres, and set its daily schedule. Run it once and check a new file appears in the bucket's cms/database folder.
+
+### Step 7: Tidy up
+
+1. On the new Postgres service, remove the public access you added in Step 3. The CMS does not need it.
+2. If the old Railway project still exists, stop or delete its backup helper. Otherwise it keeps uploading copies of the old, abandoned database into the same folder, and the newest file in the bucket is no longer the right one.
+3. Delete the old project when you are sure the new one works.
+
+### What came back on its own, and what had to be redone
+
+Came back from the backups: the CMS code, every user account, every collaborator and which site they belong to, and the CMS's connection to GitHub.
+
+Had to be redone by hand: the settings, pasted from the password manager; the two custom build and deploy commands, which were in nobody's notes; the address, moved in Railway and in Cloudflare DNS; the backup helper. Everyone had to sign in once more.
+
+Nothing on the live website changed at any point.
+
