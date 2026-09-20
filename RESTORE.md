@@ -200,7 +200,7 @@ Note: this is the one step that was not repeated during the restore test. It was
 
 ### Step 7: Tidy up
 
-1. On the new Postgres service, remove the public access you added in Step 3. The CMS does not need it.
+1. On the new Postgres service, remove the public access you added in Step 3. The CMS does not need it. One side effect: Railway's own Database tab stops loading and sits on "attempting to connect" forever, because that viewer reaches the database through the public door. This is expected and the database is fine. To look inside, add public access again for a few minutes, then remove it.
 2. If the old Railway project still exists, stop or delete its backup helper. Otherwise it keeps uploading copies of the old, abandoned database into the same folder, and the newest file in the bucket is no longer the right one.
 3. Delete the old project when you are sure the new one works.
 
