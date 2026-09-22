@@ -29,6 +29,7 @@ content:
       - name: price
         label: Price
         type: number
+        position: sidebar
         description: Asking price or monthly rent, as a plain number with no symbols or commas.
         required: true
         options:
@@ -36,12 +37,14 @@ content:
       - name: currency
         label: Currency
         type: string
+        position: sidebar
         description: Three-letter currency code used when the price is displayed.
         required: true
         default: GBP
       - name: status
         label: Status
         type: select
+        position: sidebar
         description: Where the property is in the selling or letting process.
         required: true
         options:
@@ -69,14 +72,17 @@ content:
       - name: city
         label: Town or city
         type: string
+        width: half
         required: true
       - name: postcode
         label: Postcode
         type: string
+        width: half
         required: true
       - name: bedrooms
         label: Bedrooms
         type: number
+        width: half
         description: Use 0 for land and commercial units.
         required: true
         default: 0
@@ -85,6 +91,7 @@ content:
       - name: bathrooms
         label: Bathrooms
         type: number
+        width: half
         required: true
         default: 0
         options:
@@ -99,6 +106,7 @@ content:
       - name: featured
         label: Featured
         type: boolean
+        position: sidebar
         description: Featured properties are highlighted on the home page.
         default: false
       - name: image
@@ -124,6 +132,7 @@ content:
       - name: agent
         label: Agent
         type: reference
+        position: sidebar
         description: The member of staff handling this property.
         required: true
         options:
@@ -134,6 +143,7 @@ content:
       - name: publishedDate
         label: Published date
         type: date
+        position: sidebar
         description: Used to sort listings, newest first.
         required: true
         options:
@@ -193,6 +203,7 @@ content:
       - name: socials
         label: Social profiles
         type: object
+        collapsible: true
         description: Full web addresses. Leave blank any the person does not use.
         fields:
           - name: linkedin
