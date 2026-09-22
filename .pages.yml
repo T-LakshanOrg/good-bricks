@@ -29,7 +29,7 @@ content:
       - name: price
         label: Price
         type: number
-        position: sidebar
+        width: half
         description: Asking price or monthly rent, as a plain number with no symbols or commas.
         required: true
         options:
@@ -37,33 +37,10 @@ content:
       - name: currency
         label: Currency
         type: string
-        position: sidebar
+        width: half
         description: Three-letter currency code used when the price is displayed.
         required: true
         default: GBP
-      - name: status
-        label: Status
-        type: select
-        position: sidebar
-        description: Where the property is in the selling or letting process.
-        required: true
-        options:
-          values:
-            - { name: for-sale, label: For sale }
-            - { name: sold, label: Sold }
-            - { name: under-offer, label: Under offer }
-            - { name: to-let, label: To let }
-      - name: type
-        label: Property type
-        type: select
-        required: true
-        options:
-          values:
-            - { name: house, label: House }
-            - { name: flat, label: Flat }
-            - { name: bungalow, label: Bungalow }
-            - { name: commercial, label: Commercial }
-            - { name: land, label: Land }
       - name: address
         label: Address
         type: string
@@ -79,6 +56,18 @@ content:
         type: string
         width: half
         required: true
+      - name: type
+        label: Property type
+        type: select
+        width: half
+        required: true
+        options:
+          values:
+            - { name: house, label: House }
+            - { name: flat, label: Flat }
+            - { name: bungalow, label: Bungalow }
+            - { name: commercial, label: Commercial }
+            - { name: land, label: Land }
       - name: bedrooms
         label: Bedrooms
         type: number
@@ -99,23 +88,16 @@ content:
       - name: area
         label: Floor area (sq ft)
         type: number
+        width: half
         description: Floor area or plot size in square feet, as a plain number.
         required: true
         options:
           min: 0
-      - name: featured
-        label: Featured
-        type: boolean
-        position: sidebar
-        description: Featured properties are highlighted on the home page.
-        default: false
-      - name: image
-        label: Main image
-        type: image
-        description: The single photograph used on listing cards and at the top of the page.
-        required: true
-        options:
-          path: public/media/properties
+      - name: features
+        label: Key features
+        type: string
+        list: true
+        description: Short bullet points, one per line, e.g. "Southeast-facing garden".
       - name: gallery
         label: Gallery
         type: image
@@ -124,11 +106,39 @@ content:
           multiple: true
           unique: true
           path: public/media/properties
-      - name: features
-        label: Key features
-        type: string
-        list: true
-        description: Short bullet points, one per line, e.g. "Southeast-facing garden".
+      - name: body
+        label: Description
+        type: rich-text
+        description: The full description shown on the property page.
+        options:
+          format: markdown
+          path: public/media/properties
+      - name: status
+        label: Status
+        type: select
+        position: sidebar
+        description: Where the property is in the selling or letting process.
+        required: true
+        options:
+          values:
+            - { name: for-sale, label: For sale }
+            - { name: sold, label: Sold }
+            - { name: under-offer, label: Under offer }
+            - { name: to-let, label: To let }
+      - name: featured
+        label: Featured
+        type: boolean
+        position: sidebar
+        description: Featured properties are highlighted on the home page.
+        default: false
+      - name: publishedDate
+        label: Published date
+        type: date
+        position: sidebar
+        description: Used to sort listings, newest first.
+        required: true
+        options:
+          format: yyyy-MM-dd
       - name: agent
         label: Agent
         type: reference
@@ -140,20 +150,13 @@ content:
           value: "{path}"
           label: "{fields.name}"
           search: "fields.name,fields.role,fields.email"
-      - name: publishedDate
-        label: Published date
-        type: date
+      - name: image
+        label: Main image
+        type: image
         position: sidebar
-        description: Used to sort listings, newest first.
+        description: The single photograph used on listing cards and at the top of the page.
         required: true
         options:
-          format: yyyy-MM-dd
-      - name: body
-        label: Description
-        type: rich-text
-        description: The full description shown on the property page.
-        options:
-          format: markdown
           path: public/media/properties
 
   - name: agents
