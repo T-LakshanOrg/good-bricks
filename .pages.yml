@@ -17,6 +17,7 @@ content:
       primary: title
       sort: [publishedDate, title, price, status]
       search: [title, address, city, postcode]
+      editable: [price]
       default:
         sort: publishedDate
         order: desc
