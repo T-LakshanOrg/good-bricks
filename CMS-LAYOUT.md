@@ -46,6 +46,14 @@ Our CMS repository is a copy of the public Pages CMS project with three small ad
 
 A form with none of these settings looks exactly as it does in stock Pages CMS.
 
+There is also one setting for the **list** of entries, rather than the form:
+
+| Setting under `view` | What it does |
+| --- | --- |
+| `editable: [price]` | Lets editors change the price straight from the list. Click the price, type the new one, press Enter to save. Escape or clicking away cancels. Each save is one change in the site's history and one site rebuild. Works for number and plain text columns. |
+
+Unlike the layout options, this one does save content. It changes only the one field and keeps everything else in the entry as it is.
+
 ---
 
 ## Layout rules worth following
