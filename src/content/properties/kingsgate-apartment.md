@@ -1,30 +1,29 @@
 ---
 title: Flat 12, Kingsgate House
-price: 1195
+price: 5000
 currency: GBP
-status: to-let
-type: flat
 address: Flat 12, Kingsgate House, Temple Quay
 city: Bristol
 postcode: BS1 6DZ
+type: flat
 bedrooms: 1
 bathrooms: 1
 area: 540
-featured: false
-image: /media/properties/kingsgate-apartment/01-exterior.jpg
-gallery:
-  - /media/properties/kingsgate-apartment/02.jpg
-  - /media/properties/kingsgate-apartment/03.jpg
-  - /media/properties/kingsgate-apartment/04.jpg
 features:
   - Furnished, available immediately
   - Concierge and secure bike store
   - Five minutes from Temple Meads
   - Bills excluded, EPC rating B
-agent: src/content/agents/priya-raman.md
+gallery:
+  - /media/properties/kingsgate-apartment/02.jpg
+  - /media/properties/kingsgate-apartment/03.jpg
+  - /media/properties/kingsgate-apartment/04.jpg
+status: to-let
+featured: false
 publishedDate: 2026-09-10
+agent: src/content/agents/priya-raman.md
+image: /media/properties/kingsgate-apartment/01-exterior.jpg
 ---
-
 A furnished one-bedroom apartment on the sixth floor of a managed block at Temple Quay, available immediately at £1,195 per calendar month.
 
 The open-plan living area faces east over the floating harbour, with a fitted kitchen along one wall and space for a small dining table. The bedroom takes a king-size bed with fitted wardrobes along one side.
