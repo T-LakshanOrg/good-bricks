@@ -37,9 +37,41 @@ For the LWP setup, we made the following changes:
 
 Total: five files touched, all small. The About dialog, the emails and the help links still say Pages CMS, and that is fine.
 
+## Per-site branding
+
+Each website can give the CMS its own look while that site is open: its logo and name at the top of the sidebar, its colours and its fonts. Sign-in and the list of sites stay in our agency branding, because at that point the CMS does not yet know which site the editor wants.
+
+It is set in a `branding` block at the top of the site's `.pages.yml`. Good Bricks, for example:
+
+```yaml
+branding:
+  name: Good Bricks
+  logo: public/media/site/logo.svg
+  colors:
+    primary: "#1c6b45"     # buttons, links, highlights
+    background: "#f6f6f5"  # page behind everything
+    surface: "#ffffff"     # cards, forms, menus
+    text: "#131313"
+    border: "#e4e4e2"
+    sidebar: "#131313"
+    sidebar_text: "#ffffff"
+  font:
+    body: Instrument Sans
+    heading: Instrument Sans
+```
+
+Good to know:
+
+- Every line is optional. Leave one out and that part keeps our default look. Leave the whole block out and the site looks like the rest of the CMS.
+- Colours are hex values. Fonts are Google Fonts names, spelled exactly as on fonts.google.com.
+- The logo is a file in the site's repository: svg, png, jpg or webp, under 256 KB. A square image works best.
+- Colours apply in light mode. In dark mode the CMS keeps its own dark theme and only takes the brand's main colour.
+- A change to the logo can take up to five minutes to show, because the CMS keeps a short copy.
+- This only works on our self-hosted CMS. The hosted pagescms.org rejects the `branding` block.
+
 ## Things to keep in mind
 
-- **One CMS serves all clients.** The name, logo, colour, sender and GitHub App name are our agency's branding, not a client's. If a client wants their own logo on the sign-in page, they need their own CMS: a separate hosting service, database and GitHub App. That is doable, but it is another thing to back up and restore.
+- **One CMS serves all clients.** The sign-in page, the list of sites, the sender and the GitHub App name are our agency's branding. Once a client opens their site, the CMS switches to their own look (see "Per-site branding" below). A client who wants their own brand on the sign-in page too needs their own address pointing at the CMS, or their own CMS.
 - **Keep the edits small.** Change text, images and colour values only. Do not restructure files or move things around. Small edits almost never clash with updates from Pages CMS; large ones will.
 - **Leave the help links alone.** Several pages link to the Pages CMS documentation. Those are useful to editors and to us. Rewriting every mention of Pages CMS is a lot of work for no benefit and makes updates painful.
 - **Keep a short list of what was changed.** Which files, and what they say now. It takes a minute to write and saves guesswork after every update.
