@@ -49,7 +49,7 @@ branding:
   logo: public/media/site/logo.svg
   colors:
     primary: "#1c6b45"     # buttons, links, highlights
-    background: "#f6f6f5"  # page behind everything
+    background: "#eef5f0"  # page behind everything
     surface: "#ffffff"     # cards, forms, menus
     text: "#131313"
     border: "#e4e4e2"

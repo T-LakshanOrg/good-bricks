@@ -4,7 +4,7 @@ branding:
   logo: public/media/site/logo.svg
   colors:
     primary: "#1c6b45"
-    background: "#f6f6f5"
+    background: "#eef5f0"
     surface: "#ffffff"
     text: "#131313"
     border: "#e4e4e2"
