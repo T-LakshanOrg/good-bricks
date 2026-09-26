@@ -1,6 +1,8 @@
 # How the CMS looks while this site is open (self-hosted CMS only).
 branding:
   name: Good Bricks
+  description: Edit listings, agents and pages on the Good Bricks website.
+  website: https://good-bricks.itsthusharahere.workers.dev
   logo: public/media/site/logo.svg
   colors:
     primary: "#1c6b45"

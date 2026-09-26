@@ -39,13 +39,15 @@ Total: five files touched, all small. The About dialog, the emails and the help 
 
 ## Per-site branding
 
-Each website can give the CMS its own look while that site is open: its logo and name at the top of the sidebar, its colours and its fonts. Sign-in and the list of sites stay in our agency branding, because at that point the CMS does not yet know which site the editor wants.
+Each website can give the CMS its own look while that site is open: its logo and name at the top of the sidebar, its colours and its fonts. The About popup (the small icon at the bottom of the sidebar) also shows the site's logo, name, a short description and a link to the website, with one line saying it is built on Pages CMS. Sign-in and the list of sites stay in our agency branding, because at that point the CMS does not yet know which site the editor wants.
 
 It is set in a `branding` block at the top of the site's `.pages.yml`. Good Bricks, for example:
 
 ```yaml
 branding:
   name: Good Bricks
+  description: Edit listings, agents and pages on the Good Bricks website.
+  website: https://good-bricks.itsthusharahere.workers.dev
   logo: public/media/site/logo.svg
   colors:
     primary: "#1c6b45"     # buttons, links, highlights
