@@ -1,3 +1,19 @@
+# How the CMS looks while this site is open (self-hosted CMS only).
+branding:
+  name: Good Bricks
+  logo: public/media/site/logo.svg
+  colors:
+    primary: "#1c6b45"
+    background: "#f6f6f5"
+    surface: "#ffffff"
+    text: "#131313"
+    border: "#e4e4e2"
+    sidebar: "#131313"
+    sidebar_text: "#ffffff"
+  font:
+    body: Instrument Sans
+    heading: Instrument Sans
+
 media:
   input: public/media
   output: /media
