@@ -39,7 +39,9 @@ Total: five files touched, all small. The About dialog, the emails and the help 
 
 ## Per-site branding
 
-Each website can give the CMS its own look while that site is open: its logo and name at the top of the sidebar, its colours and its fonts. The About popup (the small icon at the bottom of the sidebar) also shows the site's logo, name, a short description and a link to the website, with one line saying it is built on Pages CMS. Sign-in and the list of sites stay in our agency branding, because at that point the CMS does not yet know which site the editor wants.
+Each website can give the CMS its own look while that site is open: its logo and name at the top of the sidebar, its colours and its fonts. The About popup (the small icon at the bottom of the sidebar) also shows the site's logo, name, a short description and a link to the website, with one line saying it is built on Pages CMS. The list of sites stays in our agency branding.
+
+**The client's sign-in link.** Send each client the address of their own site in the CMS, for example `https://cms.testmywork.xyz/T-LakshanOrg/good-bricks`. When they are signed out, it shows a sign-in page with their logo, name, colours and fonts, and after signing in they land straight in their site. `https://cms.testmywork.xyz/sign-in?site=T-LakshanOrg/good-bricks` does the same. The plain `https://cms.testmywork.xyz` still shows our agency sign-in page. The GitHub "authorise" screen and the sign-in emails keep our agency name.
 
 It is set in a `branding` block at the top of the site's `.pages.yml`. Good Bricks, for example:
 
@@ -68,12 +70,12 @@ Good to know:
 - Colours are hex values. Fonts are Google Fonts names, spelled exactly as on fonts.google.com.
 - The logo is a file in the site's repository: svg, png, jpg or webp, under 256 KB. A square image works best.
 - Colours apply in light mode. In dark mode the CMS keeps its own dark theme and only takes the brand's main colour.
-- A change to the logo can take up to five minutes to show, because the CMS keeps a short copy.
+- A change to the logo or colours can take up to five minutes to show, because the CMS keeps a short copy. The sign-in page is the slowest to catch up.
 - This only works on our self-hosted CMS. The hosted pagescms.org rejects the `branding` block.
 
 ## Things to keep in mind
 
-- **One CMS serves all clients.** The sign-in page, the list of sites, the sender and the GitHub App name are our agency's branding. Once a client opens their site, the CMS switches to their own look (see "Per-site branding" below). A client who wants their own brand on the sign-in page too needs their own address pointing at the CMS, or their own CMS.
+- **One CMS serves all clients.** The sign-in page, the list of sites, the sender and the GitHub App name are our agency's branding. Once a client opens their site, or uses their own sign-in link, the CMS switches to their own look (see "Per-site branding" below). A client who wants their own web address for the CMS, such as `cms.clientname.com`, needs extra DNS, hosting and GitHub App setup, or their own CMS.
 - **Keep the edits small.** Change text, images and colour values only. Do not restructure files or move things around. Small edits almost never clash with updates from Pages CMS; large ones will.
 - **Leave the help links alone.** Several pages link to the Pages CMS documentation. Those are useful to editors and to us. Rewriting every mention of Pages CMS is a lot of work for no benefit and makes updates painful.
 - **Keep a short list of what was changed.** Which files, and what they say now. It takes a minute to write and saves guesswork after every update.
