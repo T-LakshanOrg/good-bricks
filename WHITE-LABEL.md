@@ -60,8 +60,8 @@ branding:
     sidebar: "#131313"
     sidebar_text: "#ffffff"
   font:
-    body: Instrument Sans
-    heading: Instrument Sans
+    body: Poppins
+    heading: Poppins
 ```
 
 Good to know:
