@@ -60,8 +60,8 @@ branding:
     sidebar: "#131313"
     sidebar_text: "#ffffff"
   font:
-    body: Poppins
-    heading: Poppins
+    body: Lora
+    heading: Lora
 ```
 
 Good to know:
