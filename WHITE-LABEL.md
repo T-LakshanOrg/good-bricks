@@ -41,7 +41,7 @@ Total: five files touched, all small. The About dialog, the emails and the help 
 
 Each website can give the CMS its own look while that site is open: its logo and name at the top of the sidebar, its colours and its fonts. The About popup (the small icon at the bottom of the sidebar) also shows the site's logo, name, a short description and a link to the website, with one line saying it is built on Pages CMS. The list of sites stays in our agency branding.
 
-**The client's sign-in link.** Send each client the address of their own site in the CMS, for example `https://cms.testmywork.xyz/T-LakshanOrg/good-bricks`. When they are signed out, it shows a sign-in page with their logo, name, colours and fonts, and after signing in they land straight in their site. `https://cms.testmywork.xyz/sign-in?site=T-LakshanOrg/good-bricks` does the same. The plain `https://cms.testmywork.xyz` still shows our agency sign-in page. The GitHub "authorise" screen and the sign-in emails keep our agency name.
+**The client's sign-in link.** Send each client the address of their own site in the CMS, for example `https://cms.testmywork.xyz/T-LakshanOrg/good-bricks`. When they are signed out, it shows a sign-in page with their logo, name, colours and fonts, and after signing in they land straight in their site. `https://cms.testmywork.xyz/sign-in?site=T-LakshanOrg/good-bricks` does the same. The client's sign-in page offers email sign-in only; the "Sign in with GitHub" button is hidden. The plain `https://cms.testmywork.xyz` still shows our agency sign-in page with the GitHub button, so we sign in there. The sign-in emails keep our agency name.
 
 It is set in a `branding` block at the top of the site's `.pages.yml`. Good Bricks, for example:
 
